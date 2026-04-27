@@ -1,0 +1,15 @@
+edunova\connexion\controllers\UserController.class
+edunova\connexion\controllers\DashboardController$2.class
+edunova\connexion\controllers\ForgotPasswordController.class
+edunova\connexion\dao\UserDAO.class
+edunova\connexion\tools\DatabaseConnection.class
+edunova\connexion\tools\PasswordUtils.class
+edunova\connexion\tests\Main.class
+edunova\connexion\controllers\UserController$1.class
+edunova\connexion\controllers\UserFormController.class
+edunova\connexion\controllers\DashboardController$3.class
+edunova\connexion\tools\SessionManager.class
+edunova\connexion\controllers\LoginController.class
+edunova\connexion\controllers\DashboardController.class
+edunova\connexion\controllers\DashboardController$1.class
+edunova\connexion\models\User.class

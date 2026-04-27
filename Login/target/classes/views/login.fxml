@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.RadialGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="VBoxO" alignment="CENTER" blendMode="DARKEN" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="459.0" prefWidth="600.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 30;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edunova.connexion.controllers.LoginController">
+
+   <children>
+      <Label alignment="CENTER" contentDisplay="RIGHT" prefHeight="133.0" prefWidth="320.0" text="EduNova" textAlignment="CENTER">
+         <font>
+            <Font name="Sitka Small Bold Italic" size="47.0" />
+         </font>
+         <opaqueInsets><Insets /></opaqueInsets>
+         <effect><Blend /></effect>
+         <VBox.margin>
+            <Insets bottom="100.0" left="150.0" right="160.0" top="-100.0" />
+         </VBox.margin>
+         <textFill>
+            <RadialGradient centerX="0.4447513812154696" centerY="0.6516587677725119" focusDistance="0.09195402298850563" radius="0.5919540229885057">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="0.5" green="0.41898149251937866" blue="0.41898149251937866" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color red="0.8736598491668701" green="0.881733238697052" blue="0.9342105388641357" opacity="0.4000000059604645" />
+                     </color>
+                  </Stop>
+               </stops>
+            </RadialGradient>
+         </textFill>
+      </Label>
+
+      <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="46.0" prefWidth="338.0" text="Connectez-vous maintenant !" textAlignment="CENTER" textFill="#00000073">
+         <font>
+            <Font name="System Bold Italic" size="24.0" />
+         </font>
+         <VBox.margin>
+            <Insets bottom="130.0" right="10.0" top="-110.0" />
+         </VBox.margin>
+      </Label>
+      <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="29.0" prefWidth="136.0" text="Adresse e-mail *" textAlignment="CENTER">
+         <VBox.margin>
+            <Insets bottom="100.0" right="270.0" top="-100.0" />
+         </VBox.margin>
+         <font>
+            <Font name="Andalus" size="18.0" />
+         </font>
+      </Label>
+
+      <TextField fx:id="txtEmailO" prefHeight="30.0" prefWidth="600.0" promptText="email@example.com">
+         <font><Font size="14.0" /></font>
+         <VBox.margin>
+            <Insets bottom="50.0" left="75.0" right="100.0" top="-100.0" />
+         </VBox.margin>
+      </TextField>
+      <Label text="Mot de passe *">
+         <font>
+            <Font name="Andalus" size="18.0" />
+         </font>
+         <VBox.margin>
+            <Insets bottom="40.0" right="280.0" top="-40.0" />
+         </VBox.margin>
+      </Label>
+
+      <PasswordField fx:id="txtPasswordO" prefHeight="30.0" prefWidth="355.0" promptText=" Entrez votre mot de passe">
+         <font><Font size="14.0" /></font>
+         <VBox.margin>
+            <Insets left="75.0" right="100.0" top="-40.0" />
+         </VBox.margin>
+      </PasswordField>
+      <Label alignment="CENTER" contentDisplay="CENTER" lineSpacing="16.0" onMouseClicked="#handleForgotPassword" prefHeight="39.0" prefWidth="225.0" style="-fx-cursor: hand;" text="J'ai oublié mon mot de passe" textFill="#1c0cff" underline="true">textAlignment="CENTER" textFill="#1c0cff" underline="true">
+         <VBox.margin>
+            <Insets bottom="-40.0" right="180.0" />
+         </VBox.margin>
+         <font>
+            <Font name="Andalus" size="18.0" />
+         </font>
+      </Label>
+
+      <ComboBox fx:id="cbRoleO" cache="true" prefWidth="158.0" promptText="Role" visibleRowCount="20">
+         <VBox.margin><Insets bottom="-30.0" right="240.0" top="60.0" /></VBox.margin>
+         <effect>
+            <ColorAdjust brightness="-0.21">
+               <input>
+                  <Blend />
+               </input>
+            </ColorAdjust>
+         </effect>
+      </ComboBox>
+
+      <Button alignment="CENTER" blendMode="MULTIPLY" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#handleLogin" prefHeight="0.0" prefWidth="221.0" text="Connectez-vous" textAlignment="CENTER">
+         <font><Font name="Andalus" size="15.0" /></font>
+         <VBox.margin><Insets bottom="10.0" left="180.0" top="5.0" /></VBox.margin>
+         <textFill>
+            <LinearGradient endX="1.0" endY="1.0" startX="0.976303317535545">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="0.49043211340904236" green="0.06481481343507767" blue="0.7368420958518982" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color red="0.9078947305679321" green="0.05884502828121185" blue="0.7946881055831909" />
+                     </color>
+                  </Stop>
+               </stops>
+            </LinearGradient>
+         </textFill>
+         <effect>
+            <Blend />
+         </effect>
+      </Button>
+   </children>
+
+   <opaqueInsets><Insets /></opaqueInsets>
+   <cursor><Cursor fx:constant="HAND" /></cursor>
+   <padding>
+      <Insets top="10.0" />
+   </padding>
+</VBox>
