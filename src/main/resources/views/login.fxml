@@ -84,12 +84,12 @@
             <Insets left="75.0" right="100.0" top="-40.0" />
          </VBox.margin>
       </PasswordField>
-      <Label alignment="CENTER" contentDisplay="CENTER" lineSpacing="16.0" onMouseClicked="#handleForgotPassword" prefHeight="39.0" prefWidth="225.0" style="-fx-cursor: hand;" text="J'ai oublié mon mot de passe" textFill="#1c0cff" underline="true">textAlignment="CENTER" textFill="#1c0cff" underline="true">
+      <Label alignment="CENTER" contentDisplay="CENTER" lineSpacing="16.0" onMouseClicked="#handleForgotPassword" prefHeight="39.0" prefWidth="225.0" style="-fx-cursor: hand;" text="J'ai oublié mon mot de passe" textAlignment="CENTER" textFill="#1c0cff" underline="true">textAlignment="CENTER" textFill="#1c0cff" underline="true">
          <VBox.margin>
-            <Insets bottom="-40.0" right="180.0" />
+            <Insets bottom="-40.0" right="190.0" />
          </VBox.margin>
          <font>
-            <Font name="Andalus" size="18.0" />
+            <Font name="Andalus" size="17.0" />
          </font>
       </Label>
 
