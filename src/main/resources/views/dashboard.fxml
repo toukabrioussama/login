@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
@@ -16,15 +26,15 @@
               style="-fx-background-color: #1a1a2e; -fx-padding: 0;">
 
             <!-- Logo -->
-            <VBox alignment="CENTER" style="-fx-padding: 30 20 25 20;
-                  -fx-border-color: transparent transparent #2d2d4e transparent;
-                  -fx-border-width: 0 0 1 0;">
+            <VBox alignment="CENTER"
+                  style="-fx-padding: 30 20 25 20;
+                         -fx-border-color: transparent transparent #2d2d4e transparent;
+                         -fx-border-width: 0 0 1 0;">
                 <Label text="EDU"
                        style="-fx-font-size: 28; -fx-font-weight: bold;
                               -fx-text-fill: #7c3aed;"/>
                 <Label text="NOVA"
-                       style="-fx-font-size: 11; -fx-text-fill: #a78bfa;
-                              -fx-letter-spacing: 6;"/>
+                       style="-fx-font-size: 11; -fx-text-fill: #a78bfa;"/>
             </VBox>
 
             <!-- Info utilisateur -->
@@ -48,12 +58,10 @@
                               -fx-padding: 3 10;"/>
             </VBox>
 
-            <!-- Séparateur -->
             <Region style="-fx-background-color: #2d2d4e; -fx-pref-height: 1;"/>
 
-            <!-- Menu Navigation -->
+            <!-- Menu -->
             <VBox spacing="4" style="-fx-padding: 15 12;">
-
                 <Button fx:id="btnMenuDashboard"
                         text="   Tableau de bord"
                         maxWidth="Infinity"
@@ -62,7 +70,6 @@
                                -fx-text-fill: white; -fx-font-size: 13;
                                -fx-background-radius: 8; -fx-padding: 11 15;
                                -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
-
                 <Button fx:id="btnMenuUsers"
                         text="   Utilisateurs"
                         maxWidth="Infinity"
@@ -71,7 +78,6 @@
                                -fx-text-fill: #94a3b8; -fx-font-size: 13;
                                -fx-background-radius: 8; -fx-padding: 11 15;
                                -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
-
                 <Button fx:id="btnMenuEtudiants"
                         text="   Etudiants"
                         maxWidth="Infinity"
@@ -80,7 +86,6 @@
                                -fx-text-fill: #94a3b8; -fx-font-size: 13;
                                -fx-background-radius: 8; -fx-padding: 11 15;
                                -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
-
                 <Button fx:id="btnMenuEnseignants"
                         text="   Enseignants"
                         maxWidth="Infinity"
@@ -89,7 +94,6 @@
                                -fx-text-fill: #94a3b8; -fx-font-size: 13;
                                -fx-background-radius: 8; -fx-padding: 11 15;
                                -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
-
                 <Button fx:id="btnMenuClasses"
                         text="   Classes"
                         maxWidth="Infinity"
@@ -100,7 +104,6 @@
                                -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
             </VBox>
 
-            <!-- Spacer -->
             <Region VBox.vgrow="ALWAYS"/>
 
             <!-- Déconnexion -->
@@ -122,7 +125,7 @@
     <center>
         <VBox style="-fx-background-color: #0f0f1a;">
 
-            <!-- ── NAVBAR ── -->
+            <!-- NAVBAR -->
             <HBox alignment="CENTER_LEFT"
                   style="-fx-background-color: #1a1a2e; -fx-padding: 15 25;
                          -fx-border-color: transparent transparent #2d2d4e transparent;
@@ -131,7 +134,6 @@
                        style="-fx-font-size: 18; -fx-font-weight: bold;
                               -fx-text-fill: #e2e8f0;"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <!-- Recherche globale -->
                 <TextField fx:id="txtRechercheGlobal"
                            promptText="  Rechercher..."
                            prefWidth="220"
@@ -147,31 +149,27 @@
                               -fx-padding: 0 0 0 20;"/>
             </HBox>
 
-            <!-- ── CONTENU DYNAMIQUE ── -->
+            <!-- PAGES -->
             <StackPane VBox.vgrow="ALWAYS">
 
-                <!-- PAGE : DASHBOARD -->
+                <!-- PAGE DASHBOARD -->
                 <ScrollPane fx:id="pageDashboard"
                             fitToWidth="true"
                             style="-fx-background: #0f0f1a;
                                    -fx-background-color: #0f0f1a;">
                     <VBox spacing="20" style="-fx-padding: 25;">
 
-                        <!-- Titre -->
                         <Label text="Vue d'ensemble"
                                style="-fx-font-size: 14; -fx-text-fill: #64748b;"/>
 
-                        <!-- Cartes statistiques -->
+                        <!-- Cartes stats -->
                         <HBox spacing="15">
-
-                            <!-- Carte 1 : Total Users -->
+                            <!-- Total Users -->
                             <VBox HBox.hgrow="ALWAYS"
                                   style="-fx-background-color: #1a1a2e;
-                                         -fx-background-radius: 12;
-                                         -fx-padding: 20;
+                                         -fx-background-radius: 12; -fx-padding: 20;
                                          -fx-border-color: #2d2d4e;
-                                         -fx-border-radius: 12;
-                                         -fx-border-width: 1;">
+                                         -fx-border-radius: 12; -fx-border-width: 1;">
                                 <HBox alignment="CENTER_LEFT" spacing="10">
                                     <Label text="👥"
                                            style="-fx-font-size: 24;
@@ -182,28 +180,23 @@
                                         <Label text="Total Utilisateurs"
                                                style="-fx-text-fill: #94a3b8;
                                                       -fx-font-size: 12;"/>
-                                        <Label fx:id="lblTotalUsers"
-                                               text="0"
+                                        <Label fx:id="lblTotalUsers" text="0"
                                                style="-fx-font-size: 28;
                                                       -fx-font-weight: bold;
                                                       -fx-text-fill: #e2e8f0;"/>
                                     </VBox>
                                 </HBox>
-                                <Label fx:id="lblEvolutionUsers"
-                                       text="-- comptes actifs"
+                                <Label fx:id="lblEvolutionUsers" text="-- comptes actifs"
                                        style="-fx-text-fill: #22c55e;
-                                              -fx-font-size: 11;
-                                              -fx-padding: 8 0 0 0;"/>
+                                              -fx-font-size: 11; -fx-padding: 8 0 0 0;"/>
                             </VBox>
 
-                            <!-- Carte 2 : Admins -->
+                            <!-- Admins -->
                             <VBox HBox.hgrow="ALWAYS"
                                   style="-fx-background-color: #1a1a2e;
-                                         -fx-background-radius: 12;
-                                         -fx-padding: 20;
+                                         -fx-background-radius: 12; -fx-padding: 20;
                                          -fx-border-color: #7c3aed;
-                                         -fx-border-radius: 12;
-                                         -fx-border-width: 1;">
+                                         -fx-border-radius: 12; -fx-border-width: 1;">
                                 <HBox alignment="CENTER_LEFT" spacing="10">
                                     <Label text="🛡️"
                                            style="-fx-font-size: 24;
@@ -214,8 +207,7 @@
                                         <Label text="Administrateurs"
                                                style="-fx-text-fill: #94a3b8;
                                                       -fx-font-size: 12;"/>
-                                        <Label fx:id="lblTotalAdmins"
-                                               text="0"
+                                        <Label fx:id="lblTotalAdmins" text="0"
                                                style="-fx-font-size: 28;
                                                       -fx-font-weight: bold;
                                                       -fx-text-fill: #a78bfa;"/>
@@ -223,18 +215,15 @@
                                 </HBox>
                                 <Label text="Accès complet"
                                        style="-fx-text-fill: #7c3aed;
-                                              -fx-font-size: 11;
-                                              -fx-padding: 8 0 0 0;"/>
+                                              -fx-font-size: 11; -fx-padding: 8 0 0 0;"/>
                             </VBox>
 
-                            <!-- Carte 3 : Enseignants -->
+                            <!-- Enseignants -->
                             <VBox HBox.hgrow="ALWAYS"
                                   style="-fx-background-color: #1a1a2e;
-                                         -fx-background-radius: 12;
-                                         -fx-padding: 20;
+                                         -fx-background-radius: 12; -fx-padding: 20;
                                          -fx-border-color: #0ea5e9;
-                                         -fx-border-radius: 12;
-                                         -fx-border-width: 1;">
+                                         -fx-border-radius: 12; -fx-border-width: 1;">
                                 <HBox alignment="CENTER_LEFT" spacing="10">
                                     <Label text="👨‍🏫"
                                            style="-fx-font-size: 24;
@@ -245,8 +234,7 @@
                                         <Label text="Enseignants"
                                                style="-fx-text-fill: #94a3b8;
                                                       -fx-font-size: 12;"/>
-                                        <Label fx:id="lblTotalEnseignants"
-                                               text="0"
+                                        <Label fx:id="lblTotalEnseignants" text="0"
                                                style="-fx-font-size: 28;
                                                       -fx-font-weight: bold;
                                                       -fx-text-fill: #38bdf8;"/>
@@ -254,18 +242,15 @@
                                 </HBox>
                                 <Label text="Corps enseignant"
                                        style="-fx-text-fill: #0ea5e9;
-                                              -fx-font-size: 11;
-                                              -fx-padding: 8 0 0 0;"/>
+                                              -fx-font-size: 11; -fx-padding: 8 0 0 0;"/>
                             </VBox>
 
-                            <!-- Carte 4 : Etudiants -->
+                            <!-- Etudiants -->
                             <VBox HBox.hgrow="ALWAYS"
                                   style="-fx-background-color: #1a1a2e;
-                                         -fx-background-radius: 12;
-                                         -fx-padding: 20;
+                                         -fx-background-radius: 12; -fx-padding: 20;
                                          -fx-border-color: #10b981;
-                                         -fx-border-radius: 12;
-                                         -fx-border-width: 1;">
+                                         -fx-border-radius: 12; -fx-border-width: 1;">
                                 <HBox alignment="CENTER_LEFT" spacing="10">
                                     <Label text="🎓"
                                            style="-fx-font-size: 24;
@@ -276,8 +261,7 @@
                                         <Label text="Etudiants"
                                                style="-fx-text-fill: #94a3b8;
                                                       -fx-font-size: 12;"/>
-                                        <Label fx:id="lblTotalEtudiants"
-                                               text="0"
+                                        <Label fx:id="lblTotalEtudiants" text="0"
                                                style="-fx-font-size: 28;
                                                       -fx-font-weight: bold;
                                                       -fx-text-fill: #34d399;"/>
@@ -285,22 +269,18 @@
                                 </HBox>
                                 <Label text="Inscrits actifs"
                                        style="-fx-text-fill: #10b981;
-                                              -fx-font-size: 11;
-                                              -fx-padding: 8 0 0 0;"/>
+                                              -fx-font-size: 11; -fx-padding: 8 0 0 0;"/>
                             </VBox>
                         </HBox>
 
                         <!-- Derniers utilisateurs -->
                         <VBox style="-fx-background-color: #1a1a2e;
-                                     -fx-background-radius: 12;
-                                     -fx-padding: 20;
+                                     -fx-background-radius: 12; -fx-padding: 20;
                                      -fx-border-color: #2d2d4e;
-                                     -fx-border-radius: 12;
-                                     -fx-border-width: 1;">
+                                     -fx-border-radius: 12; -fx-border-width: 1;">
                             <HBox alignment="CENTER_LEFT">
                                 <Label text="Derniers utilisateurs ajoutés"
-                                       style="-fx-font-size: 15;
-                                              -fx-font-weight: bold;
+                                       style="-fx-font-size: 15; -fx-font-weight: bold;
                                               -fx-text-fill: #e2e8f0;"/>
                                 <Region HBox.hgrow="ALWAYS"/>
                                 <Button text="Voir tous"
@@ -308,37 +288,31 @@
                                         style="-fx-background-color: #2d1b69;
                                                -fx-text-fill: #a78bfa;
                                                -fx-background-radius: 6;
-                                               -fx-padding: 5 12;
-                                               -fx-cursor: hand;"/>
+                                               -fx-padding: 5 12; -fx-cursor: hand;"/>
                             </HBox>
-                            <TableView fx:id="tableDerniers"
-                                       prefHeight="200"
+                            <TableView fx:id="tableDerniers" prefHeight="200"
                                        style="-fx-background-color: transparent;
                                               -fx-border-color: transparent;
                                               -fx-padding: 10 0 0 0;">
                                 <columns>
-                                    <TableColumn fx:id="dColNom"    text="Nom"    prefWidth="160"/>
-                                    <TableColumn fx:id="dColEmail"  text="Email"  prefWidth="220"/>
-                                    <TableColumn fx:id="dColRole"   text="Rôle"   prefWidth="130"/>
-                                    <TableColumn fx:id="dColActif"  text="Statut" prefWidth="100"/>
+                                    <TableColumn fx:id="dColNom"   text="Nom"    prefWidth="160"/>
+                                    <TableColumn fx:id="dColEmail" text="Email"  prefWidth="220"/>
+                                    <TableColumn fx:id="dColRole"  text="Rôle"   prefWidth="130"/>
+                                    <TableColumn fx:id="dColActif" text="Statut" prefWidth="100"/>
                                 </columns>
                             </TableView>
                         </VBox>
 
-                        <!-- Stats par rôle -->
+                        <!-- Stats actifs / actions rapides -->
                         <HBox spacing="15">
                             <VBox HBox.hgrow="ALWAYS"
                                   style="-fx-background-color: #1a1a2e;
-                                         -fx-background-radius: 12;
-                                         -fx-padding: 20;
+                                         -fx-background-radius: 12; -fx-padding: 20;
                                          -fx-border-color: #2d2d4e;
-                                         -fx-border-radius: 12;
-                                         -fx-border-width: 1;">
+                                         -fx-border-radius: 12; -fx-border-width: 1;">
                                 <Label text="Comptes actifs vs inactifs"
-                                       style="-fx-font-size: 14;
-                                              -fx-font-weight: bold;
-                                              -fx-text-fill: #e2e8f0;
-                                              -fx-padding: 0 0 15 0;"/>
+                                       style="-fx-font-size: 14; -fx-font-weight: bold;
+                                              -fx-text-fill: #e2e8f0; -fx-padding: 0 0 15 0;"/>
                                 <HBox spacing="20" alignment="CENTER">
                                     <VBox alignment="CENTER" spacing="5">
                                         <Label fx:id="lblActifs" text="0"
@@ -364,16 +338,12 @@
 
                             <VBox HBox.hgrow="ALWAYS"
                                   style="-fx-background-color: #1a1a2e;
-                                         -fx-background-radius: 12;
-                                         -fx-padding: 20;
+                                         -fx-background-radius: 12; -fx-padding: 20;
                                          -fx-border-color: #2d2d4e;
-                                         -fx-border-radius: 12;
-                                         -fx-border-width: 1;">
+                                         -fx-border-radius: 12; -fx-border-width: 1;">
                                 <Label text="Actions rapides"
-                                       style="-fx-font-size: 14;
-                                              -fx-font-weight: bold;
-                                              -fx-text-fill: #e2e8f0;
-                                              -fx-padding: 0 0 15 0;"/>
+                                       style="-fx-font-size: 14; -fx-font-weight: bold;
+                                              -fx-text-fill: #e2e8f0; -fx-padding: 0 0 15 0;"/>
                                 <VBox spacing="10">
                                     <Button text="  + Ajouter un utilisateur"
                                             maxWidth="Infinity"
@@ -381,8 +351,7 @@
                                             style="-fx-background-color: #7c3aed;
                                                    -fx-text-fill: white;
                                                    -fx-background-radius: 8;
-                                                   -fx-padding: 10;
-                                                   -fx-font-size: 13;
+                                                   -fx-padding: 10; -fx-font-size: 13;
                                                    -fx-cursor: hand;"/>
                                     <Button text="  Gérer les utilisateurs"
                                             maxWidth="Infinity"
@@ -390,8 +359,7 @@
                                             style="-fx-background-color: #1e293b;
                                                    -fx-text-fill: #94a3b8;
                                                    -fx-background-radius: 8;
-                                                   -fx-padding: 10;
-                                                   -fx-font-size: 13;
+                                                   -fx-padding: 10; -fx-font-size: 13;
                                                    -fx-border-color: #2d2d4e;
                                                    -fx-border-radius: 8;
                                                    -fx-cursor: hand;"/>
@@ -401,13 +369,12 @@
                     </VBox>
                 </ScrollPane>
 
-                <!-- PAGE : UTILISATEURS -->
+                <!-- PAGE UTILISATEURS -->
                 <VBox fx:id="pageUsers"
                       visible="false" managed="false"
                       style="-fx-background-color: #0f0f1a; -fx-padding: 25;"
                       spacing="15">
 
-                    <!-- Barre actions -->
                     <HBox alignment="CENTER_LEFT" spacing="12">
                         <TextField fx:id="txtRecherche"
                                    promptText="  Rechercher..."
@@ -424,8 +391,7 @@
                                 style="-fx-background-color: #2d1b69;
                                        -fx-text-fill: #a78bfa;
                                        -fx-background-radius: 8;
-                                       -fx-padding: 9 16;
-                                       -fx-cursor: hand;"/>
+                                       -fx-padding: 9 16; -fx-cursor: hand;"/>
                         <Button text="Actualiser"
                                 onAction="#handleActualiser"
                                 style="-fx-background-color: #1e293b;
@@ -433,39 +399,28 @@
                                        -fx-background-radius: 8;
                                        -fx-padding: 9 16;
                                        -fx-border-color: #2d2d4e;
-                                       -fx-border-radius: 8;
-                                       -fx-cursor: hand;"/>
+                                       -fx-border-radius: 8; -fx-cursor: hand;"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <Button text="  + Ajouter"
                                 onAction="#handleAjouterUser"
                                 style="-fx-background-color: #7c3aed;
-                                       -fx-text-fill: white;
-                                       -fx-font-weight: bold;
-                                       -fx-background-radius: 8;
-                                       -fx-padding: 9 20;
-                                       -fx-font-size: 13;
-                                       -fx-cursor: hand;"/>
+                                       -fx-text-fill: white; -fx-font-weight: bold;
+                                       -fx-background-radius: 8; -fx-padding: 9 20;
+                                       -fx-font-size: 13; -fx-cursor: hand;"/>
                     </HBox>
 
-                    <!-- Tableau -->
-                    <TableView fx:id="tableUsers"
-                               VBox.vgrow="ALWAYS"
-                               style="-fx-background-color: #1a1a2e;
-                                      -fx-background-radius: 12;
-                                      -fx-border-color: #2d2d4e;
-                                      -fx-border-radius: 12;
-                                      -fx-border-width: 1;">
-                        <columns>
-                            <TableColumn fx:id="colId"     text="ID"        prefWidth="50"/>
-                            <TableColumn fx:id="colNom"    text="Nom"       prefWidth="130"/>
-                            <TableColumn fx:id="colPrenom" text="Prénom"    prefWidth="130"/>
-                            <TableColumn fx:id="colEmail"  text="Email"     prefWidth="200"/>
-                            <TableColumn fx:id="colTel"    text="Téléphone" prefWidth="120"/>
-                            <TableColumn fx:id="colRole"   text="Rôle"      prefWidth="120"/>
-                            <TableColumn fx:id="colActif"  text="Statut"    prefWidth="90"/>
-                            <TableColumn fx:id="colActions" text="Actions"  prefWidth="160"/>
-                        </columns>
-                    </TableView>
+                    <Label fx:id="lblCompteurUsers" text="0 utilisateur(s)"
+                           style="-fx-text-fill: #64748b; -fx-font-size: 12;"/>
+
+                    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                                style="-fx-background: #0f0f1a;
+                                       -fx-background-color: #0f0f1a;
+                                       -fx-border-color: transparent;">
+                        <FlowPane fx:id="flowCartes"
+                                  hgap="15" vgap="15"
+                                  style="-fx-background-color: #0f0f1a;
+                                         -fx-padding: 5;"/>
+                    </ScrollPane>
                 </VBox>
 
             </StackPane>
