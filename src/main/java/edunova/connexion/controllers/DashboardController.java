@@ -5,14 +5,13 @@ import edunova.connexion.models.User;
 import edunova.connexion.tools.SessionManager;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -23,17 +22,18 @@ import java.util.List;
 public class DashboardController {
 
     // ── NAVBAR ────────────────────────────────────────────────────
-    @FXML private Label lblPageTitre;
-    @FXML private Label lblDateHeure;
-    @FXML private Label lblUserNom;
-    @FXML private Label lblUserRole;
-    @FXML private Label lblAvatarInitiales;
+    @FXML private Label     lblPageTitre;
+    @FXML private Label     lblDateHeure;
+    @FXML private Label     lblUserNom;
+    @FXML private Label     lblUserRole;
+    @FXML private Label     lblAvatarInitiales;
+    @FXML private TextField txtRechercheGlobal;
 
     // ── PAGES ─────────────────────────────────────────────────────
-    @FXML private javafx.scene.control.ScrollPane pageDashboard;
-    @FXML private VBox pageUsers;
+    @FXML private ScrollPane pageDashboard;
+    @FXML private VBox       pageUsers;
 
-    // ── STATS DASHBOARD ───────────────────────────────────────────
+    // ── STATS ─────────────────────────────────────────────────────
     @FXML private Label lblTotalUsers;
     @FXML private Label lblTotalAdmins;
     @FXML private Label lblTotalEnseignants;
@@ -43,26 +43,16 @@ public class DashboardController {
     @FXML private Label lblInactifs;
 
     // ── TABLE DASHBOARD ───────────────────────────────────────────
-    @FXML private TableView<User>           tableDerniers;
-    @FXML private TableColumn<User, String> dColNom;
-    @FXML private TableColumn<User, String> dColEmail;
-    @FXML private TableColumn<User, String> dColRole;
+    @FXML private TableView<User>            tableDerniers;
+    @FXML private TableColumn<User, String>  dColNom;
+    @FXML private TableColumn<User, String>  dColEmail;
+    @FXML private TableColumn<User, String>  dColRole;
     @FXML private TableColumn<User, Boolean> dColActif;
 
-    // ── TABLE USERS ───────────────────────────────────────────────
-    @FXML private TableView<User>            tableUsers;
-    @FXML private TableColumn<User, Integer> colId;
-    @FXML private TableColumn<User, String>  colNom;
-    @FXML private TableColumn<User, String>  colPrenom;
-    @FXML private TableColumn<User, String>  colEmail;
-    @FXML private TableColumn<User, String>  colTel;
-    @FXML private TableColumn<User, String>  colRole;
-    @FXML private TableColumn<User, Boolean> colActif;
-    @FXML private TableColumn<User, Void>    colActions;
-
-    // ── RECHERCHE ─────────────────────────────────────────────────
+    // ── CARTES USERS ──────────────────────────────────────────────
+    @FXML private FlowPane flowCartes;
+    @FXML private Label    lblCompteurUsers;
     @FXML private TextField txtRecherche;
-    @FXML private TextField txtRechercheGlobal;
 
     // ── BOUTONS MENU ──────────────────────────────────────────────
     @FXML private Button btnMenuDashboard;
@@ -73,34 +63,43 @@ public class DashboardController {
 
     private final UserDAO dao = new UserDAO();
 
+    // ── STYLES SIDEBAR ────────────────────────────────────────────
+    private static final String STYLE_ACTIF =
+            "-fx-background-color: #7c3aed; -fx-text-fill: white;" +
+                    "-fx-font-size: 13; -fx-background-radius: 8;" +
+                    "-fx-padding: 11 15; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;";
+
+    private static final String STYLE_NORMAL =
+            "-fx-background-color: transparent; -fx-text-fill: #94a3b8;" +
+                    "-fx-font-size: 13; -fx-background-radius: 8;" +
+                    "-fx-padding: 11 15; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;";
+
     // ── INITIALISATION ────────────────────────────────────────────
     @FXML
     public void initialize() {
         configurerSession();
         configurerDate();
         configurerTableDashboard();
-        configurerTableUsers();
         chargerStatistiques();
         chargerTousUsers();
     }
 
-    // ── Session utilisateur ───────────────────────────────────────
+    // ── Session ───────────────────────────────────────────────────
     private void configurerSession() {
         SessionManager s = SessionManager.getInstance();
         lblUserNom.setText(s.getEmail());
         lblUserRole.setText(s.getRole());
-        String initiale = s.getEmail().substring(0, 1).toUpperCase();
-        lblAvatarInitiales.setText(initiale);
+        lblAvatarInitiales.setText(
+                s.getEmail().substring(0, 1).toUpperCase());
     }
 
-    // ── Date heure ────────────────────────────────────────────────
+    // ── Date ──────────────────────────────────────────────────────
     private void configurerDate() {
-        String date = LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-        lblDateHeure.setText(date);
+        lblDateHeure.setText(LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
     }
 
-    // ── Table dashboard (derniers users) ─────────────────────────
+    // ── Table dashboard ───────────────────────────────────────────
     private void configurerTableDashboard() {
         dColNom.setCellValueFactory(new PropertyValueFactory<>("nom"));
         dColEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
@@ -120,71 +119,19 @@ public class DashboardController {
         });
     }
 
-    // ── Table utilisateurs avec boutons Modifier/Supprimer ────────
-    private void configurerTableUsers() {
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        colNom.setCellValueFactory(new PropertyValueFactory<>("nom"));
-        colPrenom.setCellValueFactory(new PropertyValueFactory<>("prenom"));
-        colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-        colTel.setCellValueFactory(new PropertyValueFactory<>("telephone"));
-        colRole.setCellValueFactory(new PropertyValueFactory<>("roleNom"));
-        colActif.setCellValueFactory(new PropertyValueFactory<>("actif"));
-
-        // Colonne statut
-        colActif.setCellFactory(col -> new TableCell<>() {
-            @Override
-            protected void updateItem(Boolean val, boolean empty) {
-                super.updateItem(val, empty);
-                if (empty || val == null) { setText(null); return; }
-                setText(val ? "Actif" : "Inactif");
-                setStyle(val
-                        ? "-fx-text-fill: #22c55e; -fx-font-weight: bold;"
-                        : "-fx-text-fill: #f87171; -fx-font-weight: bold;");
-            }
-        });
-
-        // Colonne Actions : boutons Modifier / Supprimer
-        colActions.setCellFactory(col -> new TableCell<>() {
-            private final Button btnEdit = new Button("Modifier");
-            private final Button btnDel  = new Button("Supprimer");
-            private final HBox   box     = new HBox(6, btnEdit, btnDel);
-
-            {
-                btnEdit.setStyle(
-                        "-fx-background-color: #2d1b69; -fx-text-fill: #a78bfa;" +
-                                "-fx-background-radius: 5; -fx-padding: 4 10; -fx-cursor: hand;");
-                btnDel.setStyle(
-                        "-fx-background-color: #2d1b1b; -fx-text-fill: #f87171;" +
-                                "-fx-background-radius: 5; -fx-padding: 4 10; -fx-cursor: hand;");
-
-                btnEdit.setOnAction(e -> {
-                    User u = getTableView().getItems().get(getIndex());
-                    ouvrirFormModification(u);
-                });
-                btnDel.setOnAction(e -> {
-                    User u = getTableView().getItems().get(getIndex());
-                    supprimerUser(u);
-                });
-            }
-
-            @Override
-            protected void updateItem(Void val, boolean empty) {
-                super.updateItem(val, empty);
-                setGraphic(empty ? null : box);
-            }
-        });
-    }
-
-    // ── Charger statistiques ──────────────────────────────────────
+    // ── Statistiques ──────────────────────────────────────────────
     private void chargerStatistiques() {
         List<User> tous = dao.findAll();
 
-        long total      = tous.size();
-        long admins     = tous.stream().filter(u -> "Administrateur".equals(u.getRoleNom())).count();
-        long enseignants= tous.stream().filter(u -> "Enseignant".equals(u.getRoleNom())).count();
-        long etudiants  = tous.stream().filter(u -> "Etudiant".equals(u.getRoleNom())).count();
-        long actifs     = tous.stream().filter(User::isActif).count();
-        long inactifs   = total - actifs;
+        long total       = tous.size();
+        long admins      = tous.stream()
+                .filter(u -> "Administrateur".equals(u.getRoleNom())).count();
+        long enseignants = tous.stream()
+                .filter(u -> "Enseignant".equals(u.getRoleNom())).count();
+        long etudiants   = tous.stream()
+                .filter(u -> "Etudiant".equals(u.getRoleNom())).count();
+        long actifs      = tous.stream().filter(User::isActif).count();
+        long inactifs    = total - actifs;
 
         lblTotalUsers.setText(String.valueOf(total));
         lblTotalAdmins.setText(String.valueOf(admins));
@@ -194,91 +141,182 @@ public class DashboardController {
         lblActifs.setText(String.valueOf(actifs));
         lblInactifs.setText(String.valueOf(inactifs));
 
-        // Derniers 5 users ajoutés
-        List<User> derniers = tous.stream()
-                .limit(5).toList();
-        tableDerniers.setItems(FXCollections.observableArrayList(derniers));
+        tableDerniers.setItems(
+                FXCollections.observableArrayList(
+                        tous.stream().limit(5).toList()));
     }
 
-    // ── Charger tous les utilisateurs ────────────────────────────
+    // ── Charger cartes ────────────────────────────────────────────
     private void chargerTousUsers() {
-        ObservableList<User> data =
-                FXCollections.observableArrayList(dao.findAll());
-        tableUsers.setItems(data);
+        afficherCartes(dao.findAll());
     }
 
-    // ── Navigation sidebar ────────────────────────────────────────
-    @FXML
-    private void handleMenuDashboard() {
-        afficherPage("dashboard");
+    private void afficherCartes(List<User> users) {
+        flowCartes.getChildren().clear();
+        lblCompteurUsers.setText(users.size() + " utilisateur(s)");
+        for (User u : users) {
+            flowCartes.getChildren().add(creerCarte(u));
+        }
     }
 
-    @FXML
-    private void handleMenuUsers() {
-        afficherPage("users");
+    // ── Créer une carte ───────────────────────────────────────────
+    private VBox creerCarte(User u) {
+        String couleur, emoji;
+        switch (u.getRoleNom() != null ? u.getRoleNom() : "") {
+            case "Administrateur" -> { couleur = "#7c3aed"; emoji = "🛡️"; }
+            case "Enseignant"     -> { couleur = "#0ea5e9"; emoji = "👨‍🏫"; }
+            case "Etudiant"       -> { couleur = "#10b981"; emoji = "🎓"; }
+            default               -> { couleur = "#64748b"; emoji = "👤"; }
+        }
+
+        VBox carte = new VBox(12);
+        carte.setPrefWidth(220);
+        carte.setMaxWidth(220);
+        carte.setStyle(styleCarteNormal(couleur));
+
+        // Avatar
+        String initiales = "";
+        if (u.getPrenom() != null && !u.getPrenom().isEmpty())
+            initiales += u.getPrenom().substring(0, 1).toUpperCase();
+        if (u.getNom() != null && !u.getNom().isEmpty())
+            initiales += u.getNom().substring(0, 1).toUpperCase();
+
+        StackPane avatar = new StackPane();
+        avatar.setMinSize(56, 56);
+        avatar.setMaxSize(56, 56);
+        avatar.setStyle("-fx-background-color:" + couleur +
+                "; -fx-background-radius: 50;");
+        Label lblInit = new Label(initiales);
+        lblInit.setStyle(
+                "-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: white;");
+        avatar.getChildren().add(lblInit);
+
+        Label lblEmoji = new Label(emoji);
+        lblEmoji.setStyle("-fx-font-size: 20;");
+
+        HBox header = new HBox(10, avatar, lblEmoji);
+        header.setAlignment(Pos.CENTER_LEFT);
+
+        // Infos
+        Label lblNom = new Label(u.getPrenom() + " " + u.getNom());
+        lblNom.setStyle(
+                "-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #e2e8f0;");
+        lblNom.setWrapText(true);
+
+        Label lblEmail = new Label(u.getEmail());
+        lblEmail.setStyle("-fx-font-size: 11; -fx-text-fill: #64748b;");
+        lblEmail.setWrapText(true);
+
+        String tel = (u.getTelephone() != null && !u.getTelephone().isEmpty())
+                ? u.getTelephone() : "Pas de téléphone";
+        Label lblTel = new Label("📞 " + tel);
+        lblTel.setStyle("-fx-font-size: 11; -fx-text-fill: #94a3b8;");
+
+        // Badges
+        Label lblRole = new Label(u.getRoleNom());
+        lblRole.setStyle(
+                "-fx-background-color:" + couleur + "22;" +
+                        "-fx-text-fill:" + couleur + ";" +
+                        "-fx-background-radius: 20; -fx-padding: 3 12;" +
+                        "-fx-font-size: 11; -fx-font-weight: bold;");
+
+        Label lblStatut = new Label(u.isActif() ? "● Actif" : "● Inactif");
+        lblStatut.setStyle(
+                "-fx-text-fill:" + (u.isActif() ? "#22c55e" : "#f87171") + ";" +
+                        "-fx-font-size: 11; -fx-font-weight: bold;");
+
+        HBox badges = new HBox(8, lblRole, lblStatut);
+        badges.setAlignment(Pos.CENTER_LEFT);
+
+        Region sep = new Region();
+        sep.setStyle("-fx-background-color: #2d2d4e;");
+        sep.setPrefHeight(1);
+        sep.setMaxWidth(Double.MAX_VALUE);
+
+        // Boutons
+        Button btnMod = new Button("✏ Modifier");
+        btnMod.setMaxWidth(Double.MAX_VALUE);
+        btnMod.setStyle(
+                "-fx-background-color: #2d1b69; -fx-text-fill: #a78bfa;" +
+                        "-fx-background-radius: 7; -fx-padding: 7 0;" +
+                        "-fx-font-size: 12; -fx-cursor: hand;");
+
+        Button btnDel = new Button("🗑 Supprimer");
+        btnDel.setMaxWidth(Double.MAX_VALUE);
+        btnDel.setStyle(
+                "-fx-background-color: #2d1b1b; -fx-text-fill: #f87171;" +
+                        "-fx-background-radius: 7; -fx-padding: 7 0;" +
+                        "-fx-font-size: 12; -fx-cursor: hand;");
+
+        HBox btns = new HBox(8, btnMod, btnDel);
+        HBox.setHgrow(btnMod, Priority.ALWAYS);
+        HBox.setHgrow(btnDel, Priority.ALWAYS);
+
+        btnMod.setOnAction(e -> ouvrirFormulaire(u));
+        btnDel.setOnAction(e -> supprimerUser(u));
+
+        // Hover
+        final String couleurFinal = couleur;
+        carte.setOnMouseEntered(e ->
+                carte.setStyle(styleCarteHover(couleurFinal)));
+        carte.setOnMouseExited(e ->
+                carte.setStyle(styleCarteNormal(couleurFinal)));
+
+        carte.getChildren().addAll(
+                header, lblNom, lblEmail, lblTel, badges, sep, btns);
+        return carte;
     }
 
-    @FXML
-    private void handleMenuEtudiants() {
-        showAlert("Info", "Module Etudiants — bientôt disponible !");
+    private String styleCarteNormal(String c) {
+        return "-fx-background-color: #1a1a2e; -fx-background-radius: 14;" +
+                "-fx-padding: 20; -fx-border-color:" + c + ";" +
+                "-fx-border-radius: 14; -fx-border-width: 1;" +
+                "-fx-effect: dropshadow(gaussian,rgba(0,0,0,0.4),10,0,0,4);";
     }
 
-    @FXML
-    private void handleMenuEnseignants() {
-        showAlert("Info", "Module Enseignants — bientôt disponible !");
+    private String styleCarteHover(String c) {
+        return "-fx-background-color: #1e1e38; -fx-background-radius: 14;" +
+                "-fx-padding: 20; -fx-border-color:" + c + ";" +
+                "-fx-border-radius: 14; -fx-border-width: 2;" +
+                "-fx-effect: dropshadow(gaussian," + c + "66,20,0,0,0);";
     }
 
-    @FXML
-    private void handleMenuClasses() {
-        showAlert("Info", "Module Classes — bientôt disponible !");
-    }
+    // ── Navigation ────────────────────────────────────────────────
+    @FXML private void handleMenuDashboard()  { afficherPage("dashboard"); }
+    @FXML private void handleMenuUsers()      { afficherPage("users"); }
+    @FXML private void handleMenuEtudiants()  {
+        showInfo("Module Etudiants — bientôt disponible !"); }
+    @FXML private void handleMenuEnseignants() {
+        showInfo("Module Enseignants — bientôt disponible !"); }
+    @FXML private void handleMenuClasses()    {
+        showInfo("Module Classes — bientôt disponible !"); }
 
     private void afficherPage(String page) {
-        // Masquer toutes les pages
-        pageDashboard.setVisible(false);
-        pageDashboard.setManaged(false);
-        pageUsers.setVisible(false);
-        pageUsers.setManaged(false);
+        pageDashboard.setVisible(false); pageDashboard.setManaged(false);
+        pageUsers.setVisible(false);     pageUsers.setManaged(false);
 
-        // Réinitialiser styles sidebar
-        String styleActif = "-fx-background-color: #7c3aed; -fx-text-fill: white;" +
-                "-fx-font-size: 13; -fx-background-radius: 8;" +
-                "-fx-padding: 11 15; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;";
-        String styleNormal= "-fx-background-color: transparent; -fx-text-fill: #94a3b8;" +
-                "-fx-font-size: 13; -fx-background-radius: 8;" +
-                "-fx-padding: 11 15; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;";
-
-        btnMenuDashboard.setStyle(styleNormal);
-        btnMenuUsers.setStyle(styleNormal);
+        btnMenuDashboard.setStyle(STYLE_NORMAL);
+        btnMenuUsers.setStyle(STYLE_NORMAL);
 
         switch (page) {
             case "dashboard" -> {
-                pageDashboard.setVisible(true);
-                pageDashboard.setManaged(true);
+                pageDashboard.setVisible(true); pageDashboard.setManaged(true);
                 lblPageTitre.setText("Tableau de bord");
-                btnMenuDashboard.setStyle(styleActif);
+                btnMenuDashboard.setStyle(STYLE_ACTIF);
                 chargerStatistiques();
             }
             case "users" -> {
-                pageUsers.setVisible(true);
-                pageUsers.setManaged(true);
+                pageUsers.setVisible(true); pageUsers.setManaged(true);
                 lblPageTitre.setText("Gestion des Utilisateurs");
-                btnMenuUsers.setStyle(styleActif);
+                btnMenuUsers.setStyle(STYLE_ACTIF);
                 chargerTousUsers();
             }
         }
     }
 
-    // ── Ouvrir formulaire AJOUT ───────────────────────────────────
+    // ── Formulaire ────────────────────────────────────────────────
     @FXML
-    private void handleAjouterUser() {
-        ouvrirFormulaire(null);
-    }
-
-    // ── Ouvrir formulaire MODIFICATION ───────────────────────────
-    private void ouvrirFormModification(User u) {
-        ouvrirFormulaire(u);
-    }
+    private void handleAjouterUser() { ouvrirFormulaire(null); }
 
     private void ouvrirFormulaire(User userAModifier) {
         try {
@@ -293,22 +331,16 @@ public class DashboardController {
             stage.initModality(Modality.APPLICATION_MODAL);
 
             UserFormController ctrl = loader.getController();
-            if (userAModifier == null) {
-                ctrl.configurerAjout();
-            } else {
-                ctrl.configurerModification(userAModifier);
-            }
-            // Rafraîchir après sauvegarde
+            if (userAModifier == null) ctrl.configurerAjout();
+            else                       ctrl.configurerModification(userAModifier);
+
             ctrl.setOnSauvegardeCallback(() -> {
                 chargerTousUsers();
                 chargerStatistiques();
             });
-
             stage.show();
-
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Erreur", "Impossible d'ouvrir le formulaire.");
         }
     }
 
@@ -317,15 +349,15 @@ public class DashboardController {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Confirmation");
         confirm.setHeaderText(null);
-        confirm.setContentText("Supprimer " + u.getPrenom()
-                + " " + u.getNom() + " ?");
+        confirm.setContentText(
+                "Supprimer " + u.getPrenom() + " " + u.getNom() + " ?");
         confirm.showAndWait().ifPresent(r -> {
             if (r == ButtonType.OK) {
                 if (dao.delete(u.getId())) {
                     chargerTousUsers();
                     chargerStatistiques();
                 } else {
-                    showAlert("Erreur", "Échec de la suppression.");
+                    showInfo("Échec de la suppression.");
                 }
             }
         });
@@ -335,9 +367,8 @@ public class DashboardController {
     @FXML
     private void handleRecherche() {
         String kw = txtRecherche.getText().trim();
-        if (kw.isEmpty()) { chargerTousUsers(); return; }
-        tableUsers.setItems(
-                FXCollections.observableArrayList(dao.search(kw)));
+        if (kw.isEmpty()) { afficherCartes(dao.findAll()); return; }
+        afficherCartes(dao.search(kw));
     }
 
     @FXML
@@ -358,16 +389,13 @@ public class DashboardController {
             stage.setScene(new Scene(loader.load()));
             stage.show();
             ((Stage) lblPageTitre.getScene().getWindow()).close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
-    private void showAlert(String title, String msg) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.showAndWait();
+    private void showInfo(String msg) {
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
     }
 }
