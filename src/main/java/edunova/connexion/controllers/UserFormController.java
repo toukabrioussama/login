@@ -14,6 +14,8 @@ public class UserFormController {
 
     @FXML private Label           lblTitreForm;
     @FXML private Label           lblMdpHint;
+
+    // Champs
     @FXML private TextField       txtNom;
     @FXML private TextField       txtPrenom;
     @FXML private TextField       txtEmail;
@@ -21,29 +23,44 @@ public class UserFormController {
     @FXML private PasswordField   txtPassword;
     @FXML private ComboBox<String> cbRole;
     @FXML private CheckBox        chkActif;
-    @FXML private Button          btnSauvegarder;
+
+    // Labels d'erreur sous chaque champ
+    @FXML private Label errNom;
+    @FXML private Label errPrenom;
+    @FXML private Label errEmail;
+    @FXML private Label errTelephone;
+    @FXML private Label errPassword;
+    @FXML private Label errRole;
+
+    // Boutons
+    @FXML private Button            btnSauvegarder;
     @FXML private ProgressIndicator progressIndicator;
 
     private final UserDAO    dao   = new UserDAO();
     private       User       userAModifier = null;
     private       List<String[]> roles;
+    private       Runnable   onSauvegardeCallback;
 
-    // Callback pour rafraîchir la liste après sauvegarde
-    private Runnable onSauvegardeCallback;
-
-    public void setOnSauvegardeCallback(Runnable callback) {
-        this.onSauvegardeCallback = callback;
+    public void setOnSauvegardeCallback(Runnable r) {
+        this.onSauvegardeCallback = r;
     }
 
+    // ── Initialisation ────────────────────────────────────────────
     @FXML
     public void initialize() {
         roles = dao.findAllRoles();
-        for (String[] role : roles) {
-            cbRole.getItems().add(role[1]);
-        }
+        for (String[] role : roles) cbRole.getItems().add(role[1]);
+
+        // Validation en temps réel à la saisie
+        txtNom.textProperty().addListener((obs, o, n) -> validerNom());
+        txtPrenom.textProperty().addListener((obs, o, n) -> validerPrenom());
+        txtEmail.textProperty().addListener((obs, o, n) -> validerEmail());
+        txtTelephone.textProperty().addListener((obs, o, n) -> validerTelephone());
+        txtPassword.textProperty().addListener((obs, o, n) -> validerPassword());
+        cbRole.valueProperty().addListener((obs, o, n) -> validerRole());
     }
 
-    // ── Mode AJOUT (par défaut) ───────────────────────────────────
+    // ── Mode AJOUT ────────────────────────────────────────────────
     public void configurerAjout() {
         lblTitreForm.setText("Ajouter un utilisateur");
         lblMdpHint.setText("Mot de passe *");
@@ -55,8 +72,6 @@ public class UserFormController {
         userAModifier = u;
         lblTitreForm.setText("Modifier l'utilisateur");
         lblMdpHint.setText("Nouveau mot de passe (vide = inchangé)");
-
-        // Remplir le formulaire
         txtNom.setText(u.getNom());
         txtPrenom.setText(u.getPrenom());
         txtEmail.setText(u.getEmail());
@@ -64,24 +79,150 @@ public class UserFormController {
         txtPassword.clear();
         chkActif.setSelected(u.isActif());
         cbRole.setValue(u.getRoleNom());
+        effacerErreurs();
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  VALIDATIONS INDIVIDUELLES
+    // ══════════════════════════════════════════════════════════════
+
+    private boolean validerNom() {
+        String v = txtNom.getText().trim();
+        if (v.isEmpty()) {
+            setErreur(txtNom, errNom, "Le nom est obligatoire.");
+            return false;
+        }
+        if (!v.matches("[a-zA-ZÀ-ÿ\\s\\-']{2,50}")) {
+            setErreur(txtNom, errNom,
+                    "Lettres uniquement, 2 à 50 caractères.");
+            return false;
+        }
+        setOk(txtNom, errNom);
+        return true;
+    }
+
+    private boolean validerPrenom() {
+        String v = txtPrenom.getText().trim();
+        if (v.isEmpty()) {
+            setErreur(txtPrenom, errPrenom, "Le prénom est obligatoire.");
+            return false;
+        }
+        if (!v.matches("[a-zA-ZÀ-ÿ\\s\\-']{2,50}")) {
+            setErreur(txtPrenom, errPrenom,
+                    "Lettres uniquement, 2 à 50 caractères.");
+            return false;
+        }
+        setOk(txtPrenom, errPrenom);
+        return true;
+    }
+
+    private boolean validerEmail() {
+        String v = txtEmail.getText().trim();
+        if (v.isEmpty()) {
+            setErreur(txtEmail, errEmail, "L'email est obligatoire.");
+            return false;
+        }
+        if (!v.matches("^[\\w._%+\\-]+@[\\w.\\-]+\\.[a-zA-Z]{2,}$")) {
+            setErreur(txtEmail, errEmail,
+                    "Format invalide. Ex: nom@domaine.com");
+            return false;
+        }
+        setOk(txtEmail, errEmail);
+        return true;
+    }
+
+    private boolean validerTelephone() {
+        String v = txtTelephone.getText().trim();
+        // Optionnel mais si rempli → doit être valide
+        if (!v.isEmpty() && !v.matches("^[+0-9][0-9\\s\\-\\.]{7,19}$")) {
+            setErreur(txtTelephone, errTelephone,
+                    "Format invalide. Ex: +216 22 123 456");
+            return false;
+        }
+        setOk(txtTelephone, errTelephone);
+        return true;
+    }
+
+    private boolean validerPassword() {
+        String v = txtPassword.getText();
+        // Obligatoire seulement à l'ajout
+        if (userAModifier == null && v.isEmpty()) {
+            setErreur(txtPassword, errPassword,
+                    "Le mot de passe est obligatoire.");
+            return false;
+        }
+        if (!v.isEmpty() && v.length() < 6) {
+            setErreur(txtPassword, errPassword,
+                    "Minimum 6 caractères requis.");
+            return false;
+        }
+        if (!v.isEmpty() && v.length() > 50) {
+            setErreur(txtPassword, errPassword,
+                    "Maximum 50 caractères.");
+            return false;
+        }
+        setOk(txtPassword, errPassword);
+        return true;
+    }
+
+    private boolean validerRole() {
+        if (cbRole.getValue() == null) {
+            errRole.setText("Veuillez sélectionner un rôle.");
+            return false;
+        }
+        errRole.setText("");
+        return true;
+    }
+
+    // ── Valider tout d'un coup ────────────────────────────────────
+    private boolean validerTout() {
+        boolean n  = validerNom();
+        boolean p  = validerPrenom();
+        boolean e  = validerEmail();
+        boolean t  = validerTelephone();
+        boolean pw = validerPassword();
+        boolean r  = validerRole();
+        return n && p && e && t && pw && r;
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  STYLE CHAMPS : ERREUR / OK
+    // ══════════════════════════════════════════════════════════════
+
+    private void setErreur(Control champ, Label errLabel, String msg) {
+        errLabel.setText("⚠ " + msg);
+        champ.setStyle(champ.getStyle()
+                .replace("-fx-border-color: #2d2d4e;", "")
+                .replace("-fx-border-color: #22c55e;", "") +
+                "-fx-border-color: #f87171;");
+    }
+
+    private void setOk(Control champ, Label errLabel) {
+        errLabel.setText("");
+        champ.setStyle(champ.getStyle()
+                .replace("-fx-border-color: #2d2d4e;", "")
+                .replace("-fx-border-color: #f87171;", "") +
+                "-fx-border-color: #22c55e;");
+    }
+
+    private void effacerErreurs() {
+        errNom.setText("");      errPrenom.setText("");
+        errEmail.setText("");    errTelephone.setText("");
+        errPassword.setText(""); errRole.setText("");
     }
 
     // ── Sauvegarder ───────────────────────────────────────────────
     @FXML
     private void handleSauvegarder() {
-        if (!validerFormulaire()) return;
+        if (!validerTout()) return;
 
-        // Afficher le chargement
         progressIndicator.setVisible(true);
         btnSauvegarder.setDisable(true);
         btnSauvegarder.setText("Enregistrement...");
 
-        // Traitement en arrière-plan
         new Thread(() -> {
             boolean succes;
-
             if (userAModifier == null) {
-                // AJOUT
                 User u = new User();
                 u.setNom(txtNom.getText().trim());
                 u.setPrenom(txtPrenom.getText().trim());
@@ -92,7 +233,6 @@ public class UserFormController {
                 u.setRoleId(getRoleId(cbRole.getValue()));
                 succes = dao.insert(u);
             } else {
-                // MODIFICATION
                 userAModifier.setNom(txtNom.getText().trim());
                 userAModifier.setPrenom(txtPrenom.getText().trim());
                 userAModifier.setEmail(txtEmail.getText().trim());
@@ -103,22 +243,23 @@ public class UserFormController {
                 succes = dao.update(userAModifier);
             }
 
-            boolean finalSucces = succes;
+            boolean ok = succes;
             Platform.runLater(() -> {
                 progressIndicator.setVisible(false);
                 btnSauvegarder.setDisable(false);
                 btnSauvegarder.setText("Sauvegarder");
 
-                if (finalSucces) {
+                if (ok) {
                     showAlert(Alert.AlertType.INFORMATION, "Succès",
                             userAModifier == null
                                     ? "Utilisateur ajouté avec succès !"
                                     : "Utilisateur modifié avec succès !");
-                    if (onSauvegardeCallback != null) onSauvegardeCallback.run();
+                    if (onSauvegardeCallback != null)
+                        onSauvegardeCallback.run();
                     fermerFenetre();
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Erreur",
-                            "Echec. L'email existe peut-être déjà.");
+                            "Échec. L'email existe peut-être déjà.");
                 }
             });
         }).start();
@@ -132,44 +273,16 @@ public class UserFormController {
     }
 
     private int getRoleId(String roleNom) {
-        for (String[] role : roles) {
+        for (String[] role : roles)
             if (role[1].equals(roleNom)) return Integer.parseInt(role[0]);
-        }
         return 1;
     }
 
-    private boolean validerFormulaire() {
-        if (txtNom.getText().trim().isEmpty()
-                || txtPrenom.getText().trim().isEmpty()
-                || txtEmail.getText().trim().isEmpty()
-                || cbRole.getValue() == null) {
-            showAlert(Alert.AlertType.WARNING, "Champs manquants",
-                    "Nom, Prénom, Email et Rôle sont obligatoires.");
-            return false;
-        }
-        if (!txtEmail.getText().contains("@")) {
-            showAlert(Alert.AlertType.WARNING, "Email invalide",
-                    "Veuillez entrer un email valide.");
-            return false;
-        }
-        if (userAModifier == null && txtPassword.getText().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Mot de passe manquant",
-                    "Le mot de passe est obligatoire pour un nouvel utilisateur.");
-            return false;
-        }
-        if (!txtPassword.getText().isEmpty() && txtPassword.getText().length() < 6) {
-            showAlert(Alert.AlertType.WARNING, "Mot de passe trop court",
-                    "Le mot de passe doit contenir au moins 6 caractères.");
-            return false;
-        }
-        return true;
-    }
-
     private void showAlert(Alert.AlertType type, String title, String msg) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.showAndWait();
+        Alert a = new Alert(type);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
     }
 }
