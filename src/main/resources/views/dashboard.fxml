@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane prefHeight="700" prefWidth="1100" style="-fx-background-color: #0f0f1a;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edunova.connexion.controllers.DashboardController">
 
@@ -49,7 +50,10 @@
 
             <!-- Déconnexion -->
             <VBox style="-fx-padding: 15 12 20 12;                          -fx-border-color: #2d2d4e transparent transparent transparent;                          -fx-border-width: 1 0 0 0;">
-                <Button alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" onAction="#handleDeconnexion" style="-fx-background-color: #2d1b1b;                                -fx-text-fill: #f87171; -fx-font-size: 13;                                -fx-background-radius: 8; -fx-padding: 11 15;                                -fx-alignment: CENTER_LEFT; -fx-cursor: hand;" text="   Déconnexion" textAlignment="CENTER" />
+                <Button alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" onAction="#handleDeconnexion" style="-fx-background-color: #2d1b1b;                                -fx-text-fill: #f87171; -fx-font-size: 13;                                -fx-background-radius: 8; -fx-padding: 11 15;                                -fx-alignment: CENTER_LEFT; -fx-cursor: hand;" text="                Déconnexion" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold Italic" size="15.0" />
+               </font></Button>
             </VBox>
         </VBox>
     </left>
