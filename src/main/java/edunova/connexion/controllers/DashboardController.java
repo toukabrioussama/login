@@ -23,22 +23,22 @@ public class DashboardController {
     @FXML private BorderPane rootPane;
 
     // ── SIDEBAR ───────────────────────────────────────────────────
-    @FXML private VBox    sidebar;
-    @FXML private VBox    logoBox;
-    @FXML private VBox    userBox;
-    @FXML private VBox    menuBox;
-    @FXML private VBox    bottomBox;
-    @FXML private Region  sepLogo;
-    @FXML private Region  sepUser;
-    @FXML private Label   lblLogo;
-    @FXML private Label   lblLogoSub;
-    @FXML private Label   lblAvatarInitiales;
-    @FXML private Label   lblUserNom;
-    @FXML private Label   lblUserRole;
+    @FXML private VBox     sidebar;
+    @FXML private VBox     logoBox;
+    @FXML private VBox     userBox;
+    @FXML private VBox     menuBox;
+    @FXML private VBox     bottomBox;
+    @FXML private Region   sepLogo;
+    @FXML private Region   sepUser;
+    @FXML private Label    lblLogo;
+    @FXML private Label    lblLogoSub;
+    @FXML private Label    lblAvatarInitiales;
+    @FXML private Label    lblUserNom;
+    @FXML private Label    lblUserRole;
     @FXML private StackPane avatarPane;
-    @FXML private Label   lblTheme;
-    @FXML private Button  btnToggleTheme;
-    @FXML private Button  btnDeconnexion;
+    @FXML private Label    lblTheme;
+    @FXML private Button   btnToggleTheme;
+    @FXML private Button   btnDeconnexion;
 
     // ── MENU BUTTONS ──────────────────────────────────────────────
     @FXML private Button btnMenuDashboard;
@@ -48,13 +48,13 @@ public class DashboardController {
     @FXML private Button btnMenuClasses;
 
     // ── NAVBAR ────────────────────────────────────────────────────
-    @FXML private HBox    navbar;
-    @FXML private VBox    mainContent;
-    @FXML private Label   lblPageTitre;
-    @FXML private Label   lblPageSousTitre;
-    @FXML private Label   lblDateHeure;
+    @FXML private HBox      navbar;
+    @FXML private VBox      mainContent;
+    @FXML private Label     lblPageTitre;
+    @FXML private Label     lblPageSousTitre;
+    @FXML private Label     lblDateHeure;
     @FXML private TextField txtRechercheGlobal;
-    @FXML private Region  sepNavbar;
+    @FXML private Region    sepNavbar;
 
     // ── PAGES ─────────────────────────────────────────────────────
     @FXML private ScrollPane pageDashboard;
@@ -99,15 +99,16 @@ public class DashboardController {
     @FXML private TextField txtRecherche;
     @FXML private Label     lblUsersGrand;
     @FXML private Label     lblUsersSous;
+    @FXML private ScrollPane scrollUsers;
 
-    private final UserDAO dao     = new UserDAO();
-    private       boolean isDark  = true;
+    private final UserDAO dao    = new UserDAO();
+    private       boolean isDark = true;
 
     // ══════════════════════════════════════════════════════════════
-    //  THÈMES
+    //  COULEURS THÈMES
     // ══════════════════════════════════════════════════════════════
 
-    // Couleurs DARK
+    // DARK
     private static final String D_BG_MAIN    = "#0f0f1a";
     private static final String D_BG_SIDEBAR = "#1a1a2e";
     private static final String D_BG_CARD    = "#1a1a2e";
@@ -116,8 +117,11 @@ public class DashboardController {
     private static final String D_TEXT_MAIN  = "#e2e8f0";
     private static final String D_TEXT_SUB   = "#64748b";
     private static final String D_TEXT_MENU  = "#94a3b8";
+    private static final String D_EMOJI_BG_1 = "#2d1b69"; // violet foncé
+    private static final String D_EMOJI_BG_2 = "#0c2340"; // bleu foncé
+    private static final String D_EMOJI_BG_3 = "#052e1a"; // vert foncé
 
-    // Couleurs LIGHT
+    // LIGHT
     private static final String L_BG_MAIN    = "#f1f5f9";
     private static final String L_BG_SIDEBAR = "#ffffff";
     private static final String L_BG_CARD    = "#ffffff";
@@ -126,6 +130,9 @@ public class DashboardController {
     private static final String L_TEXT_MAIN  = "#1e293b";
     private static final String L_TEXT_SUB   = "#64748b";
     private static final String L_TEXT_MENU  = "#475569";
+    private static final String L_EMOJI_BG_1 = "#ede9fe"; // violet clair
+    private static final String L_EMOJI_BG_2 = "#e0f2fe"; // bleu clair
+    private static final String L_EMOJI_BG_3 = "#dcfce7"; // vert clair
 
     // ── INITIALISATION ────────────────────────────────────────────
     @FXML
@@ -171,6 +178,9 @@ public class DashboardController {
         String textMain  = isDark ? D_TEXT_MAIN  : L_TEXT_MAIN;
         String textSub   = isDark ? D_TEXT_SUB   : L_TEXT_SUB;
         String textMenu  = isDark ? D_TEXT_MENU  : L_TEXT_MENU;
+        String emojiBg1  = isDark ? D_EMOJI_BG_1 : L_EMOJI_BG_1;
+        String emojiBg2  = isDark ? D_EMOJI_BG_2 : L_EMOJI_BG_2;
+        String emojiBg3  = isDark ? D_EMOJI_BG_3 : L_EMOJI_BG_3;
 
         // ── Root ──────────────────────────────────────────────────
         rootPane.setStyle(
@@ -184,19 +194,18 @@ public class DashboardController {
         sepUser.setStyle(
                 "-fx-background-color: " + border + "; -fx-pref-height: 1;");
 
-        // Logo
         lblLogo.setStyle(
-                "-fx-font-size: 36; -fx-font-weight: bold; -fx-text-fill: #7c3aed;");
+                "-fx-font-size: 36; -fx-font-weight: bold;" +
+                        "-fx-text-fill: #7c3aed;");
         lblLogoSub.setStyle(
-                "-fx-font-size: 10; -fx-text-fill: " +
-                        (isDark ? "#a78bfa" : "#7c3aed") + "; -fx-wrap-text: true;");
+                "-fx-font-size: 10;" +
+                        "-fx-text-fill: " + (isDark ? "#a78bfa" : "#7c3aed") + ";" +
+                        "-fx-wrap-text: true;");
 
-        // User info
         lblUserNom.setStyle(
                 "-fx-font-size: 13; -fx-font-weight: bold;" +
                         "-fx-text-fill: " + textMain + "; -fx-padding: 8 0 2 0;");
 
-        // Bouton thème
         lblTheme.setStyle(
                 "-fx-font-size: 12; -fx-text-fill: " + textMenu + ";");
         btnToggleTheme.setText(isDark ? "☀ Light" : "🌙 Dark");
@@ -205,8 +214,34 @@ public class DashboardController {
                         "-fx-background-radius: 20; -fx-padding: 5 16;" +
                         "-fx-font-size: 12; -fx-cursor: hand;");
 
-        // Boutons menu sidebar
-        appliquerStyleMenuBoutons(textMenu, border);
+        btnDeconnexion.setStyle(
+                "-fx-background-color: " + (isDark ? "#2d1b1b" : "#fff0f0") + ";" +
+                        "-fx-text-fill: #f87171; -fx-font-size: 13;" +
+                        "-fx-background-radius: 8; -fx-padding: 11 15;" +
+                        "-fx-alignment: CENTER_LEFT; -fx-cursor: hand;");
+
+        // ── Boutons menu ──────────────────────────────────────────
+        String styleNormal =
+                "-fx-background-color: transparent;" +
+                        "-fx-text-fill: " + textMenu + ";" +
+                        "-fx-font-size: 13; -fx-background-radius: 8;" +
+                        "-fx-padding: 11 15; -fx-alignment: CENTER_LEFT;" +
+                        "-fx-cursor: hand;";
+        String styleActif =
+                "-fx-background-color: #7c3aed; -fx-text-fill: white;" +
+                        "-fx-font-size: 13; -fx-background-radius: 8;" +
+                        "-fx-padding: 11 15; -fx-alignment: CENTER_LEFT;" +
+                        "-fx-cursor: hand;";
+
+        for (Button b : new Button[]{
+                btnMenuUsers, btnMenuEtudiants,
+                btnMenuEnseignants, btnMenuClasses}) {
+            b.setStyle(styleNormal);
+        }
+        btnMenuDashboard.setStyle(
+                pageUsers.isVisible() ? styleNormal : styleActif);
+        btnMenuUsers.setStyle(
+                pageUsers.isVisible() ? styleActif : styleNormal);
 
         // ── Navbar ────────────────────────────────────────────────
         navbar.setStyle(
@@ -217,8 +252,11 @@ public class DashboardController {
         lblPageTitre.setStyle(
                 "-fx-font-size: 26; -fx-font-weight: bold;" +
                         "-fx-text-fill: " + textMain + ";");
-        lblPageSousTitre.setStyle(
-                "-fx-font-size: 12; -fx-text-fill: " + textSub + ";");
+
+        // ── FIX 1 : Masquer le sous-titre ─────────────────────────
+        lblPageSousTitre.setVisible(false);
+        lblPageSousTitre.setManaged(false);
+
         lblDateHeure.setStyle(
                 "-fx-text-fill: " + textSub + ";" +
                         "-fx-font-size: 12; -fx-padding: 0 0 0 20;");
@@ -234,21 +272,20 @@ public class DashboardController {
         mainContent.setStyle(
                 "-fx-background-color: " + bgMain + ";");
 
-        // ── Dashboard content ─────────────────────────────────────
+        // ── Dashboard ─────────────────────────────────────────────
         pageDashboard.setStyle(
                 "-fx-background: " + bgMain + ";" +
                         "-fx-background-color: " + bgMain + ";");
         dashContent.setStyle(
                 "-fx-background-color: " + bgMain + "; -fx-padding: 25;");
 
-        // Titres section
         lblVueEnsemble.setStyle(
                 "-fx-font-size: 22; -fx-font-weight: bold;" +
                         "-fx-text-fill: " + textMain + ";");
         lblVueSous.setStyle(
                 "-fx-font-size: 13; -fx-text-fill: " + textSub + ";");
 
-        // Labels stats
+        // Labels stats sous les chiffres
         lblStatUsers.setStyle(
                 "-fx-text-fill: " + textSub + "; -fx-font-size: 12;");
         lblStatAdmins.setStyle(
@@ -261,6 +298,21 @@ public class DashboardController {
                 "-fx-font-size: 28; -fx-font-weight: bold;" +
                         "-fx-text-fill: " + textMain + ";");
 
+        // ── FIX 3 : Logos emoji — fond adapté au thème ────────────
+        // Carte Users (emoji 👥)
+        cardUsers.setStyle(
+                "-fx-background-color: " + bgCard + ";" +
+                        "-fx-background-radius: 12; -fx-padding: 20;" +
+                        "-fx-border-color: " + border + ";" +
+                        "-fx-border-radius: 12; -fx-border-width: 1;");
+
+        // On récupère le HBox dans cardUsers pour mettre à jour
+        // le fond de l'emoji directement via les enfants
+        appliquerFondEmoji(cardUsers, 0, emojiBg1);
+        appliquerFondEmoji(cardAdmins, 0, emojiBg1);
+        appliquerFondEmoji(cardEnseignants, 0, emojiBg2);
+        appliquerFondEmoji(cardEtudiants, 0, emojiBg3);
+
         // Cartes dashboard
         String styleCard =
                 "-fx-background-color: " + bgCard + ";" +
@@ -268,12 +320,25 @@ public class DashboardController {
                         "-fx-border-color: " + border + ";" +
                         "-fx-border-radius: 12; -fx-border-width: 1;";
 
-        cardUsers.setStyle(styleCard);
+        cardAdmins.setStyle(
+                "-fx-background-color: " + bgCard + ";" +
+                        "-fx-background-radius: 12; -fx-padding: 20;" +
+                        "-fx-border-color: #7c3aed;" +
+                        "-fx-border-radius: 12; -fx-border-width: 1;");
+        cardEnseignants.setStyle(
+                "-fx-background-color: " + bgCard + ";" +
+                        "-fx-background-radius: 12; -fx-padding: 20;" +
+                        "-fx-border-color: #0ea5e9;" +
+                        "-fx-border-radius: 12; -fx-border-width: 1;");
+        cardEtudiants.setStyle(
+                "-fx-background-color: " + bgCard + ";" +
+                        "-fx-background-radius: 12; -fx-padding: 20;" +
+                        "-fx-border-color: #10b981;" +
+                        "-fx-border-radius: 12; -fx-border-width: 1;");
         cardDerniers.setStyle(styleCard);
         cardActifs.setStyle(styleCard);
         cardActions.setStyle(styleCard);
 
-        // Labels cartes
         lblDerniersTitle.setStyle(
                 "-fx-font-size: 16; -fx-font-weight: bold;" +
                         "-fx-text-fill: " + textMain + ";");
@@ -281,16 +346,15 @@ public class DashboardController {
                 "-fx-font-size: 11; -fx-text-fill: " + textSub + ";");
         lblActifsTitle.setStyle(
                 "-fx-font-size: 14; -fx-font-weight: bold;" +
-                        "-fx-text-fill: " + textMain + ";" +
-                        "-fx-padding: 0 0 15 0;");
-        lblActifsLbl.setStyle("-fx-text-fill: " + textSub + ";");
-        lblInactifsLbl.setStyle("-fx-text-fill: " + textSub + ";");
+                        "-fx-text-fill: " + textMain + "; -fx-padding: 0 0 15 0;");
+        lblActifsLbl.setStyle(
+                "-fx-text-fill: " + textSub + ";");
+        lblInactifsLbl.setStyle(
+                "-fx-text-fill: " + textSub + ";");
         lblActionsTitle.setStyle(
                 "-fx-font-size: 14; -fx-font-weight: bold;" +
-                        "-fx-text-fill: " + textMain + ";" +
-                        "-fx-padding: 0 0 15 0;");
+                        "-fx-text-fill: " + textMain + "; -fx-padding: 0 0 15 0;");
 
-        // Bouton gérer users
         btnGererUsers.setStyle(
                 "-fx-background-color: " + bgMain + ";" +
                         "-fx-text-fill: " + textMenu + ";" +
@@ -298,9 +362,20 @@ public class DashboardController {
                         "-fx-font-size: 13; -fx-border-color: " + border + ";" +
                         "-fx-border-radius: 8; -fx-cursor: hand;");
 
-        // ── Page users ────────────────────────────────────────────
+        // ── FIX 2 : Page users — fond correct en dark mode ────────
         pageUsers.setStyle(
                 "-fx-background-color: " + bgMain + "; -fx-padding: 25;");
+
+        // ScrollPane cartes — fond transparent adapté
+        if (scrollUsers != null) {
+            scrollUsers.setStyle(
+                    "-fx-background: " + bgMain + ";" +
+                            "-fx-background-color: " + bgMain + ";" +
+                            "-fx-border-color: transparent;");
+        }
+
+        flowCartes.setStyle(
+                "-fx-background-color: " + bgMain + "; -fx-padding: 5;");
 
         lblUsersGrand.setStyle(
                 "-fx-font-size: 22; -fx-font-weight: bold;" +
@@ -317,31 +392,23 @@ public class DashboardController {
                         "-fx-background-radius: 8; -fx-padding: 9 15;" +
                         "-fx-border-color: " + border + "; -fx-border-radius: 8;");
 
-        // Rafraîchir les cartes avec le nouveau thème
+        // Rafraîchir les cartes
         chargerTousUsers();
         afficherCartesDerniers(dao.findAll().stream().limit(5).toList());
     }
 
-    // ── Styles boutons menu sidebar ───────────────────────────────
-    private void appliquerStyleMenuBoutons(String textMenu, String border) {
-        Button[] boutons = {
-                btnMenuDashboard, btnMenuUsers, btnMenuEtudiants,
-                btnMenuEnseignants, btnMenuClasses
-        };
-        for (Button b : boutons) {
-            b.setStyle(
-                    "-fx-background-color: transparent;" +
-                            "-fx-text-fill: " + textMenu + ";" +
-                            "-fx-font-size: 13; -fx-background-radius: 8;" +
-                            "-fx-padding: 11 15; -fx-alignment: CENTER_LEFT;" +
-                            "-fx-cursor: hand;");
-        }
-        // Réappliquer l'actif
-        btnMenuDashboard.setStyle(
-                "-fx-background-color: #7c3aed; -fx-text-fill: white;" +
-                        "-fx-font-size: 13; -fx-background-radius: 8;" +
-                        "-fx-padding: 11 15; -fx-alignment: CENTER_LEFT;" +
-                        "-fx-cursor: hand;");
+    // ── FIX 3 : Mettre à jour le fond des emojis ─────────────────
+    private void appliquerFondEmoji(VBox card, int hboxIndex, String bgEmoji) {
+        try {
+            // Structure : VBox > HBox > Label(emoji)
+            HBox hbox = (HBox) card.getChildren().get(hboxIndex);
+            Label lblEmoji = (Label) hbox.getChildren().get(0);
+            lblEmoji.setStyle(
+                    "-fx-font-size: 24;" +
+                            "-fx-background-color: " + bgEmoji + ";" +
+                            "-fx-background-radius: 8;" +
+                            "-fx-padding: 8;");
+        } catch (Exception ignored) {}
     }
 
     // ── Statistiques ──────────────────────────────────────────────
@@ -373,7 +440,8 @@ public class DashboardController {
     private void afficherCartesDerniers(List<User> users) {
         flowDerniers.getChildren().clear();
 
-        String bgMini = isDark ? "#0f0f1a" : "#f8fafc";
+        String bgMini   = isDark ? "#0f0f1a" : "#f8fafc";
+        String textMain = isDark ? "#e2e8f0" : "#1e293b";
 
         for (User u : users) {
             String couleur, emoji;
@@ -389,7 +457,6 @@ public class DashboardController {
             carte.setPrefWidth(280);
             carte.setStyle(styleMiniNormal(couleur, bgMini));
 
-            // Avatar
             String initiales = "";
             if (u.getPrenom() != null && !u.getPrenom().isEmpty())
                 initiales += u.getPrenom().substring(0, 1).toUpperCase();
@@ -411,12 +478,10 @@ public class DashboardController {
             VBox infos = new VBox(3);
             infos.setAlignment(Pos.CENTER_LEFT);
 
-            String textColor = isDark ? "#e2e8f0" : "#1e293b";
-
             Label lblNom = new Label(u.getPrenom() + " " + u.getNom());
             lblNom.setStyle(
                     "-fx-font-size: 13; -fx-font-weight: bold;" +
-                            "-fx-text-fill: " + textColor + ";");
+                            "-fx-text-fill: " + textMain + ";");
 
             HBox ligne2 = new HBox(8);
             ligne2.setAlignment(Pos.CENTER_LEFT);
@@ -441,9 +506,9 @@ public class DashboardController {
             ligne2.getChildren().addAll(lblEmoji, lblRole, lblSep, lblStatut);
             infos.getChildren().addAll(lblNom, ligne2);
 
-            final String c = couleur;
+            final String c  = couleur;
             final String bg = bgMini;
-            carte.setOnMouseEntered(e -> carte.setStyle(styleMiniHover(c, bg)));
+            carte.setOnMouseEntered(e -> carte.setStyle(styleMiniHover(c)));
             carte.setOnMouseExited(e  -> carte.setStyle(styleMiniNormal(c, bg)));
             carte.setOnMouseClicked(e -> afficherPage("users"));
 
@@ -460,7 +525,7 @@ public class DashboardController {
                 "-fx-cursor: hand;";
     }
 
-    private String styleMiniHover(String c, String bg) {
+    private String styleMiniHover(String c) {
         String bgHover = isDark ? "#1a1a2e" : "#f0f4ff";
         return "-fx-background-color: " + bgHover + ";" +
                 "-fx-background-radius: 10; -fx-padding: 12 15;" +
@@ -494,15 +559,14 @@ public class DashboardController {
 
         String bgCard   = isDark ? "#1a1a2e" : "#ffffff";
         String textMain = isDark ? "#e2e8f0" : "#1e293b";
-        String textSub  = isDark ? "#64748b" : "#94a3b8";
-        String sepColor = isDark ? "#2d2d4e" : "#e2e8f0";
+        String textSub  = isDark ? "#64748b"  : "#94a3b8";
+        String sepColor = isDark ? "#2d2d4e"  : "#e2e8f0";
 
         VBox carte = new VBox(12);
         carte.setPrefWidth(220);
         carte.setMaxWidth(220);
         carte.setStyle(styleCarteNormal(couleur, bgCard));
 
-        // Avatar
         String initiales = "";
         if (u.getPrenom() != null && !u.getPrenom().isEmpty())
             initiales += u.getPrenom().substring(0, 1).toUpperCase();
@@ -587,7 +651,7 @@ public class DashboardController {
 
         final String c  = couleur;
         final String bg = bgCard;
-        carte.setOnMouseEntered(e -> carte.setStyle(styleCarteHover(c, bg)));
+        carte.setOnMouseEntered(e -> carte.setStyle(styleCarteHover(c)));
         carte.setOnMouseExited(e  -> carte.setStyle(styleCarteNormal(c, bg)));
 
         carte.getChildren().addAll(
@@ -603,7 +667,7 @@ public class DashboardController {
                 "-fx-effect: dropshadow(gaussian,rgba(0,0,0,0.15),10,0,0,4);";
     }
 
-    private String styleCarteHover(String c, String bg) {
+    private String styleCarteHover(String c) {
         String bgHover = isDark ? "#1e1e38" : "#f0f4ff";
         return "-fx-background-color: " + bgHover + ";" +
                 "-fx-background-radius: 14; -fx-padding: 20;" +
@@ -626,9 +690,7 @@ public class DashboardController {
         pageDashboard.setVisible(false); pageDashboard.setManaged(false);
         pageUsers.setVisible(false);     pageUsers.setManaged(false);
 
-        // Reset tous les boutons
-        String bgSidebar = isDark ? D_BG_SIDEBAR : L_BG_SIDEBAR;
-        String textMenu  = isDark ? D_TEXT_MENU  : L_TEXT_MENU;
+        String textMenu  = isDark ? D_TEXT_MENU : L_TEXT_MENU;
         String styleNormal =
                 "-fx-background-color: transparent;" +
                         "-fx-text-fill: " + textMenu + ";" +
@@ -641,19 +703,17 @@ public class DashboardController {
                         "-fx-padding: 11 15; -fx-alignment: CENTER_LEFT;" +
                         "-fx-cursor: hand;";
 
-        btnMenuDashboard.setStyle(styleNormal);
-        btnMenuUsers.setStyle(styleNormal);
-        btnMenuEtudiants.setStyle(styleNormal);
-        btnMenuEnseignants.setStyle(styleNormal);
-        btnMenuClasses.setStyle(styleNormal);
+        for (Button b : new Button[]{
+                btnMenuDashboard, btnMenuUsers, btnMenuEtudiants,
+                btnMenuEnseignants, btnMenuClasses}) {
+            b.setStyle(styleNormal);
+        }
 
         switch (page) {
             case "dashboard" -> {
                 pageDashboard.setVisible(true);
                 pageDashboard.setManaged(true);
                 lblPageTitre.setText("Tableau de bord");
-                lblPageSousTitre.setText(
-                        "Gestion des utilisateurs — Vue d'ensemble");
                 btnMenuDashboard.setStyle(styleActif);
                 chargerStatistiques();
             }
@@ -661,8 +721,6 @@ public class DashboardController {
                 pageUsers.setVisible(true);
                 pageUsers.setManaged(true);
                 lblPageTitre.setText("Utilisateurs");
-                lblPageSousTitre.setText(
-                        "Gérer tous les comptes ");
                 btnMenuUsers.setStyle(styleActif);
                 chargerTousUsers();
             }

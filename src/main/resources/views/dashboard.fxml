@@ -427,7 +427,7 @@
                                        -fx-font-weight: bold;
                                        -fx-background-radius: 8;
                                        -fx-padding: 9 20;
-                                       -fx-font-size: 13;
+                                       -fx-font-size: 14;
                                        -fx-cursor: hand;"/>
                     </HBox>
 
