@@ -10,7 +10,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -42,16 +41,12 @@ public class DashboardController {
     @FXML private Label lblActifs;
     @FXML private Label lblInactifs;
 
-    // ── TABLE DASHBOARD ───────────────────────────────────────────
-    @FXML private TableView<User>            tableDerniers;
-    @FXML private TableColumn<User, String>  dColNom;
-    @FXML private TableColumn<User, String>  dColEmail;
-    @FXML private TableColumn<User, String>  dColRole;
-    @FXML private TableColumn<User, Boolean> dColActif;
+    // ── CARTES DASHBOARD ──────────────────────────────────────────
+    @FXML private FlowPane flowDerniers;
 
     // ── CARTES USERS ──────────────────────────────────────────────
-    @FXML private FlowPane flowCartes;
-    @FXML private Label    lblCompteurUsers;
+    @FXML private FlowPane  flowCartes;
+    @FXML private Label     lblCompteurUsers;
     @FXML private TextField txtRecherche;
 
     // ── BOUTONS MENU ──────────────────────────────────────────────
@@ -79,7 +74,6 @@ public class DashboardController {
     public void initialize() {
         configurerSession();
         configurerDate();
-        configurerTableDashboard();
         chargerStatistiques();
         chargerTousUsers();
     }
@@ -97,26 +91,6 @@ public class DashboardController {
     private void configurerDate() {
         lblDateHeure.setText(LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-    }
-
-    // ── Table dashboard ───────────────────────────────────────────
-    private void configurerTableDashboard() {
-        dColNom.setCellValueFactory(new PropertyValueFactory<>("nom"));
-        dColEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-        dColRole.setCellValueFactory(new PropertyValueFactory<>("roleNom"));
-        dColActif.setCellValueFactory(new PropertyValueFactory<>("actif"));
-
-        dColActif.setCellFactory(col -> new TableCell<>() {
-            @Override
-            protected void updateItem(Boolean val, boolean empty) {
-                super.updateItem(val, empty);
-                if (empty || val == null) { setText(null); return; }
-                setText(val ? "Actif" : "Inactif");
-                setStyle(val
-                        ? "-fx-text-fill: #22c55e; -fx-font-weight: bold;"
-                        : "-fx-text-fill: #f87171; -fx-font-weight: bold;");
-            }
-        });
     }
 
     // ── Statistiques ──────────────────────────────────────────────
@@ -141,12 +115,116 @@ public class DashboardController {
         lblActifs.setText(String.valueOf(actifs));
         lblInactifs.setText(String.valueOf(inactifs));
 
-        tableDerniers.setItems(
-                FXCollections.observableArrayList(
-                        tous.stream().limit(5).toList()));
+        // Cartes mini des 5 derniers
+        afficherCartesDerniers(tous.stream().limit(5).toList());
     }
 
-    // ── Charger cartes ────────────────────────────────────────────
+    // ── Cartes mini dashboard ─────────────────────────────────────
+    private void afficherCartesDerniers(List<User> users) {
+        flowDerniers.getChildren().clear();
+
+        for (User u : users) {
+            String couleur, emoji;
+            switch (u.getRoleNom() != null ? u.getRoleNom() : "") {
+                case "Administrateur" -> { couleur = "#7c3aed"; emoji = "🛡️"; }
+                case "Enseignant"     -> { couleur = "#0ea5e9"; emoji = "👨‍🏫"; }
+                case "Etudiant"       -> { couleur = "#10b981"; emoji = "🎓"; }
+                default               -> { couleur = "#64748b"; emoji = "👤"; }
+            }
+
+            // Carte mini
+            HBox carte = new HBox(12);
+            carte.setAlignment(Pos.CENTER_LEFT);
+            carte.setPrefWidth(280);
+            carte.setStyle(styleMiniNormal(couleur));
+
+            // Avatar
+            String initiales = "";
+            if (u.getPrenom() != null && !u.getPrenom().isEmpty())
+                initiales += u.getPrenom().substring(0, 1).toUpperCase();
+            if (u.getNom() != null && !u.getNom().isEmpty())
+                initiales += u.getNom().substring(0, 1).toUpperCase();
+
+            StackPane avatar = new StackPane();
+            avatar.setMinSize(40, 40);
+            avatar.setMaxSize(40, 40);
+            avatar.setStyle(
+                    "-fx-background-color: " + couleur + ";" +
+                            "-fx-background-radius: 50;");
+            Label lblInit = new Label(initiales);
+            lblInit.setStyle(
+                    "-fx-font-size: 14; -fx-font-weight: bold;" +
+                            "-fx-text-fill: white;");
+            avatar.getChildren().add(lblInit);
+
+            // Infos
+            VBox infos = new VBox(3);
+            infos.setAlignment(Pos.CENTER_LEFT);
+
+            Label lblNom = new Label(u.getPrenom() + " " + u.getNom());
+            lblNom.setStyle(
+                    "-fx-font-size: 13; -fx-font-weight: bold;" +
+                            "-fx-text-fill: #e2e8f0;");
+
+            HBox ligne2 = new HBox(8);
+            ligne2.setAlignment(Pos.CENTER_LEFT);
+
+            Label lblEmoji = new Label(emoji);
+            lblEmoji.setStyle("-fx-font-size: 12;");
+
+            Label lblRole = new Label(u.getRoleNom());
+            lblRole.setStyle(
+                    "-fx-font-size: 11; -fx-font-weight: bold;" +
+                            "-fx-text-fill: " + couleur + ";");
+
+            Label lblSep = new Label("•");
+            lblSep.setStyle("-fx-text-fill: #2d2d4e; -fx-font-size: 11;");
+
+            Label lblStatut = new Label(u.isActif() ? "● Actif" : "● Inactif");
+            lblStatut.setStyle(
+                    "-fx-font-size: 11; -fx-font-weight: bold;" +
+                            "-fx-text-fill: " + (u.isActif() ? "#22c55e" : "#f87171") + ";");
+
+            ligne2.getChildren().addAll(lblEmoji, lblRole, lblSep, lblStatut);
+            infos.getChildren().addAll(lblNom, ligne2);
+
+            // Hover
+            final String c = couleur;
+            carte.setOnMouseEntered(e ->
+                    carte.setStyle(styleMiniHover(c)));
+            carte.setOnMouseExited(e ->
+                    carte.setStyle(styleMiniNormal(c)));
+
+            // Clic → page users
+            carte.setOnMouseClicked(e -> afficherPage("users"));
+
+            carte.getChildren().addAll(avatar, infos);
+            flowDerniers.getChildren().add(carte);
+        }
+    }
+
+    private String styleMiniNormal(String c) {
+        return "-fx-background-color: #0f0f1a;" +
+                "-fx-background-radius: 10;" +
+                "-fx-padding: 12 15;" +
+                "-fx-border-color: " + c + ";" +
+                "-fx-border-radius: 10;" +
+                "-fx-border-width: 1;" +
+                "-fx-cursor: hand;";
+    }
+
+    private String styleMiniHover(String c) {
+        return "-fx-background-color: #1a1a2e;" +
+                "-fx-background-radius: 10;" +
+                "-fx-padding: 12 15;" +
+                "-fx-border-color: " + c + ";" +
+                "-fx-border-radius: 10;" +
+                "-fx-border-width: 2;" +
+                "-fx-effect: dropshadow(gaussian," + c + "66,12,0,0,0);" +
+                "-fx-cursor: hand;";
+    }
+
+    // ── Charger cartes utilisateurs ───────────────────────────────
     private void chargerTousUsers() {
         afficherCartes(dao.findAll());
     }
@@ -159,7 +237,7 @@ public class DashboardController {
         }
     }
 
-    // ── Créer une carte ───────────────────────────────────────────
+    // ── Créer une carte utilisateur ───────────────────────────────
     private VBox creerCarte(User u) {
         String couleur, emoji;
         switch (u.getRoleNom() != null ? u.getRoleNom() : "") {
@@ -184,11 +262,13 @@ public class DashboardController {
         StackPane avatar = new StackPane();
         avatar.setMinSize(56, 56);
         avatar.setMaxSize(56, 56);
-        avatar.setStyle("-fx-background-color:" + couleur +
-                "; -fx-background-radius: 50;");
+        avatar.setStyle(
+                "-fx-background-color: " + couleur + ";" +
+                        "-fx-background-radius: 50;");
         Label lblInit = new Label(initiales);
         lblInit.setStyle(
-                "-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: white;");
+                "-fx-font-size: 20; -fx-font-weight: bold;" +
+                        "-fx-text-fill: white;");
         avatar.getChildren().add(lblInit);
 
         Label lblEmoji = new Label(emoji);
@@ -200,7 +280,8 @@ public class DashboardController {
         // Infos
         Label lblNom = new Label(u.getPrenom() + " " + u.getNom());
         lblNom.setStyle(
-                "-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #e2e8f0;");
+                "-fx-font-size: 14; -fx-font-weight: bold;" +
+                        "-fx-text-fill: #e2e8f0;");
         lblNom.setWrapText(true);
 
         Label lblEmail = new Label(u.getEmail());
@@ -215,14 +296,14 @@ public class DashboardController {
         // Badges
         Label lblRole = new Label(u.getRoleNom());
         lblRole.setStyle(
-                "-fx-background-color:" + couleur + "22;" +
-                        "-fx-text-fill:" + couleur + ";" +
+                "-fx-background-color: " + couleur + "22;" +
+                        "-fx-text-fill: " + couleur + ";" +
                         "-fx-background-radius: 20; -fx-padding: 3 12;" +
                         "-fx-font-size: 11; -fx-font-weight: bold;");
 
         Label lblStatut = new Label(u.isActif() ? "● Actif" : "● Inactif");
         lblStatut.setStyle(
-                "-fx-text-fill:" + (u.isActif() ? "#22c55e" : "#f87171") + ";" +
+                "-fx-text-fill: " + (u.isActif() ? "#22c55e" : "#f87171") + ";" +
                         "-fx-font-size: 11; -fx-font-weight: bold;");
 
         HBox badges = new HBox(8, lblRole, lblStatut);
@@ -256,11 +337,9 @@ public class DashboardController {
         btnDel.setOnAction(e -> supprimerUser(u));
 
         // Hover
-        final String couleurFinal = couleur;
-        carte.setOnMouseEntered(e ->
-                carte.setStyle(styleCarteHover(couleurFinal)));
-        carte.setOnMouseExited(e ->
-                carte.setStyle(styleCarteNormal(couleurFinal)));
+        final String c = couleur;
+        carte.setOnMouseEntered(e -> carte.setStyle(styleCarteHover(c)));
+        carte.setOnMouseExited(e  -> carte.setStyle(styleCarteNormal(c)));
 
         carte.getChildren().addAll(
                 header, lblNom, lblEmail, lblTel, badges, sep, btns);
@@ -269,26 +348,26 @@ public class DashboardController {
 
     private String styleCarteNormal(String c) {
         return "-fx-background-color: #1a1a2e; -fx-background-radius: 14;" +
-                "-fx-padding: 20; -fx-border-color:" + c + ";" +
+                "-fx-padding: 20; -fx-border-color: " + c + ";" +
                 "-fx-border-radius: 14; -fx-border-width: 1;" +
                 "-fx-effect: dropshadow(gaussian,rgba(0,0,0,0.4),10,0,0,4);";
     }
 
     private String styleCarteHover(String c) {
         return "-fx-background-color: #1e1e38; -fx-background-radius: 14;" +
-                "-fx-padding: 20; -fx-border-color:" + c + ";" +
+                "-fx-padding: 20; -fx-border-color: " + c + ";" +
                 "-fx-border-radius: 14; -fx-border-width: 2;" +
                 "-fx-effect: dropshadow(gaussian," + c + "66,20,0,0,0);";
     }
 
     // ── Navigation ────────────────────────────────────────────────
-    @FXML private void handleMenuDashboard()  { afficherPage("dashboard"); }
-    @FXML private void handleMenuUsers()      { afficherPage("users"); }
-    @FXML private void handleMenuEtudiants()  {
+    @FXML private void handleMenuDashboard()   { afficherPage("dashboard"); }
+    @FXML private void handleMenuUsers()       { afficherPage("users"); }
+    @FXML private void handleMenuEtudiants()   {
         showInfo("Module Etudiants — bientôt disponible !"); }
     @FXML private void handleMenuEnseignants() {
         showInfo("Module Enseignants — bientôt disponible !"); }
-    @FXML private void handleMenuClasses()    {
+    @FXML private void handleMenuClasses()     {
         showInfo("Module Classes — bientôt disponible !"); }
 
     private void afficherPage(String page) {
@@ -300,13 +379,15 @@ public class DashboardController {
 
         switch (page) {
             case "dashboard" -> {
-                pageDashboard.setVisible(true); pageDashboard.setManaged(true);
+                pageDashboard.setVisible(true);
+                pageDashboard.setManaged(true);
                 lblPageTitre.setText("Tableau de bord");
                 btnMenuDashboard.setStyle(STYLE_ACTIF);
                 chargerStatistiques();
             }
             case "users" -> {
-                pageUsers.setVisible(true); pageUsers.setManaged(true);
+                pageUsers.setVisible(true);
+                pageUsers.setManaged(true);
                 lblPageTitre.setText("Gestion des Utilisateurs");
                 btnMenuUsers.setStyle(STYLE_ACTIF);
                 chargerTousUsers();
