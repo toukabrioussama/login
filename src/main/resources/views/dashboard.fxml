@@ -27,7 +27,7 @@
                        fx:id="lblLogo"
                        style="-fx-font-size: 36; -fx-font-weight: bold;
                               -fx-text-fill: #7c3aed;"/>
-                <Label text="Plateforme de gestion scolaire"
+                <Label text="Application de gestion scolaire"
                        fx:id="lblLogoSub"
                        style="-fx-font-size: 10; -fx-text-fill: #a78bfa;
                               -fx-wrap-text: true; -fx-text-alignment: center;"/>
@@ -114,9 +114,9 @@
                         maxWidth="Infinity"
                         onAction="#handleDeconnexion"
                         style="-fx-background-color: #2d1b1b;
-                               -fx-text-fill: #f87171; -fx-font-size: 13;
+                               -fx-text-fill: #f87171; -fx-font-size: 16;
                                -fx-background-radius: 8; -fx-padding: 11 15;
-                               -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+                               -fx-alignment: CENTER; -fx-cursor: hand;"/>
             </VBox>
         </VBox>
     </left>

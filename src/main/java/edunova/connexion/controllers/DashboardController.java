@@ -662,7 +662,7 @@ public class DashboardController {
                 pageUsers.setManaged(true);
                 lblPageTitre.setText("Utilisateurs");
                 lblPageSousTitre.setText(
-                        "Gérer tous les comptes de la plateforme");
+                        "Gérer tous les comptes ");
                 btnMenuUsers.setStyle(styleActif);
                 chargerTousUsers();
             }
