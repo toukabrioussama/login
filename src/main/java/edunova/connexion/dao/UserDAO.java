@@ -13,7 +13,7 @@ import java.util.List;
 
 public class UserDAO {
 
-    // ── READ : tous les utilisateurs ─────────────────────────────
+    //  READ : tous les utilisateurs
     public List<User> findAll() {
         List<User> list = new ArrayList<>();
         String sql =
@@ -45,7 +45,7 @@ public class UserDAO {
         return list;
     }
 
-    // ── CREATE : ajouter un utilisateur ──────────────────────────
+    // CREATE : ajouter un utilisateur
     public boolean insert(User u) {
         String sql =
                 "INSERT INTO user (email_u, password_u, nom_u, prenom_u, " +
@@ -78,7 +78,7 @@ public class UserDAO {
         }
     }
 
-    // ── UPDATE : modifier un utilisateur ─────────────────────────
+    //  UPDATE : modifier un utilisateur
     public boolean update(User u) {
         boolean changePassword = u.getPassword() != null
                 && !u.getPassword().isEmpty();
@@ -116,7 +116,7 @@ public class UserDAO {
         }
     }
 
-    // ── DELETE : supprimer un utilisateur ────────────────────────
+    // DELETE : supprimer un utilisateur
     public boolean delete(int id) {
         String sql = "DELETE FROM user WHERE id_u = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -131,7 +131,7 @@ public class UserDAO {
         }
     }
 
-    // ── SEARCH : rechercher ───────────────────────────────────────
+    //  SEARCH : rechercher
     public List<User> search(String keyword) {
         List<User> list = new ArrayList<>();
         String sql =
@@ -169,7 +169,7 @@ public class UserDAO {
         return list;
     }
 
-    // ── Récupérer les rôles pour le ComboBox ─────────────────────
+    //  Récupérer les rôles pour le ComboBox
     public List<String[]> findAllRoles() {
         List<String[]> roles = new ArrayList<>();
         String sql = "SELECT id_r, nom_r FROM role ORDER BY nom_r";

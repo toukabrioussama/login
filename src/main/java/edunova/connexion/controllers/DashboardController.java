@@ -19,10 +19,10 @@ import java.util.List;
 
 public class DashboardController {
 
-    // ── ROOT ──────────────────────────────────────────────────────
+    // ROOT
     @FXML private BorderPane rootPane;
 
-    // ── SIDEBAR ───────────────────────────────────────────────────
+    // SIDEBAR
     @FXML private VBox     sidebar;
     @FXML private VBox     logoBox;
     @FXML private VBox     userBox;
@@ -40,14 +40,14 @@ public class DashboardController {
     @FXML private Button   btnToggleTheme;
     @FXML private Button   btnDeconnexion;
 
-    // ── MENU BUTTONS ──────────────────────────────────────────────
+    // MENU BUTTONS
     @FXML private Button btnMenuDashboard;
     @FXML private Button btnMenuUsers;
     @FXML private Button btnMenuEtudiants;
     @FXML private Button btnMenuEnseignants;
     @FXML private Button btnMenuClasses;
 
-    // ── NAVBAR ────────────────────────────────────────────────────
+    // NAVBAR
     @FXML private HBox      navbar;
     @FXML private VBox      mainContent;
     @FXML private Label     lblPageTitre;
@@ -56,12 +56,12 @@ public class DashboardController {
     @FXML private TextField txtRechercheGlobal;
     @FXML private Region    sepNavbar;
 
-    // ── PAGES ─────────────────────────────────────────────────────
+    // PAGES
     @FXML private ScrollPane pageDashboard;
     @FXML private VBox       pageUsers;
     @FXML private VBox       dashContent;
 
-    // ── STATS LABELS ──────────────────────────────────────────────
+    //  STATS LABELS
     @FXML private Label lblTotalUsers;
     @FXML private Label lblTotalAdmins;
     @FXML private Label lblTotalEnseignants;
@@ -82,7 +82,7 @@ public class DashboardController {
     @FXML private Label lblStatEnseignants;
     @FXML private Label lblStatEtudiants;
 
-    // ── CARDS DASHBOARD ───────────────────────────────────────────
+    // CARDS DASHBOARD
     @FXML private VBox     cardUsers;
     @FXML private VBox     cardAdmins;
     @FXML private VBox     cardEnseignants;
@@ -93,7 +93,7 @@ public class DashboardController {
     @FXML private Button   btnGererUsers;
     @FXML private FlowPane flowDerniers;
 
-    // ── PAGE USERS ────────────────────────────────────────────────
+    // PAGE USERS
     @FXML private FlowPane  flowCartes;
     @FXML private Label     lblCompteurUsers;
     @FXML private TextField txtRecherche;
@@ -104,9 +104,9 @@ public class DashboardController {
     private final UserDAO dao    = new UserDAO();
     private       boolean isDark = true;
 
-    // ══════════════════════════════════════════════════════════════
+
     //  COULEURS THÈMES
-    // ══════════════════════════════════════════════════════════════
+
 
     // DARK
     private static final String D_BG_MAIN    = "#0f0f1a";
@@ -134,7 +134,7 @@ public class DashboardController {
     private static final String L_EMOJI_BG_2 = "#e0f2fe"; // bleu clair
     private static final String L_EMOJI_BG_3 = "#dcfce7"; // vert clair
 
-    // ── INITIALISATION ────────────────────────────────────────────
+    //  INITIALISATION
     @FXML
     public void initialize() {
         configurerSession();
@@ -144,7 +144,7 @@ public class DashboardController {
         chargerTousUsers();
     }
 
-    // ── Session ───────────────────────────────────────────────────
+    //  Session
     private void configurerSession() {
         SessionManager s = SessionManager.getInstance();
         lblUserNom.setText(s.getEmail());
@@ -153,15 +153,15 @@ public class DashboardController {
                 s.getEmail().substring(0, 1).toUpperCase());
     }
 
-    // ── Date ──────────────────────────────────────────────────────
+    //  Date
     private void configurerDate() {
         lblDateHeure.setText(LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
     }
 
-    // ══════════════════════════════════════════════════════════════
+
     //  TOGGLE THÈME
-    // ══════════════════════════════════════════════════════════════
+
 
     @FXML
     private void handleToggleTheme() {
@@ -182,11 +182,11 @@ public class DashboardController {
         String emojiBg2  = isDark ? D_EMOJI_BG_2 : L_EMOJI_BG_2;
         String emojiBg3  = isDark ? D_EMOJI_BG_3 : L_EMOJI_BG_3;
 
-        // ── Root ──────────────────────────────────────────────────
+        //  Root
         rootPane.setStyle(
                 "-fx-background-color: " + bgMain + ";");
 
-        // ── Sidebar ───────────────────────────────────────────────
+        //  Sidebar
         sidebar.setStyle(
                 "-fx-background-color: " + bgSidebar + ";");
         sepLogo.setStyle(
@@ -220,7 +220,7 @@ public class DashboardController {
                         "-fx-background-radius: 8; -fx-padding: 11 15;" +
                         "-fx-alignment: CENTER_LEFT; -fx-cursor: hand;");
 
-        // ── Boutons menu ──────────────────────────────────────────
+        //  Boutons menu
         String styleNormal =
                 "-fx-background-color: transparent;" +
                         "-fx-text-fill: " + textMenu + ";" +
@@ -243,7 +243,7 @@ public class DashboardController {
         btnMenuUsers.setStyle(
                 pageUsers.isVisible() ? styleActif : styleNormal);
 
-        // ── Navbar ────────────────────────────────────────────────
+        //  Navbar
         navbar.setStyle(
                 "-fx-background-color: " + bgNavbar + "; -fx-padding: 15 25;");
         sepNavbar.setStyle(
@@ -253,7 +253,7 @@ public class DashboardController {
                 "-fx-font-size: 26; -fx-font-weight: bold;" +
                         "-fx-text-fill: " + textMain + ";");
 
-        // ── FIX 1 : Masquer le sous-titre ─────────────────────────
+        // Masquer le sous-titre
         lblPageSousTitre.setVisible(false);
         lblPageSousTitre.setManaged(false);
 
@@ -268,11 +268,11 @@ public class DashboardController {
                         "-fx-background-radius: 20; -fx-padding: 8 15;" +
                         "-fx-border-color: " + border + "; -fx-border-radius: 20;");
 
-        // ── Main content ──────────────────────────────────────────
+        //  Main content
         mainContent.setStyle(
                 "-fx-background-color: " + bgMain + ";");
 
-        // ── Dashboard ─────────────────────────────────────────────
+        // Dashboard
         pageDashboard.setStyle(
                 "-fx-background: " + bgMain + ";" +
                         "-fx-background-color: " + bgMain + ";");
@@ -298,7 +298,7 @@ public class DashboardController {
                 "-fx-font-size: 28; -fx-font-weight: bold;" +
                         "-fx-text-fill: " + textMain + ";");
 
-        // ── FIX 3 : Logos emoji — fond adapté au thème ────────────
+        // Logos emoji — fond adapté au thème ────────────
         // Carte Users (emoji 👥)
         cardUsers.setStyle(
                 "-fx-background-color: " + bgCard + ";" +
@@ -362,11 +362,11 @@ public class DashboardController {
                         "-fx-font-size: 13; -fx-border-color: " + border + ";" +
                         "-fx-border-radius: 8; -fx-cursor: hand;");
 
-        // ── FIX 2 : Page users — fond correct en dark mode ────────
+        //  Page users
         pageUsers.setStyle(
                 "-fx-background-color: " + bgMain + "; -fx-padding: 25;");
 
-        // ScrollPane cartes — fond transparent adapté
+        // ScrollPane cartes
         if (scrollUsers != null) {
             scrollUsers.setStyle(
                     "-fx-background: " + bgMain + ";" +
@@ -397,7 +397,7 @@ public class DashboardController {
         afficherCartesDerniers(dao.findAll().stream().limit(5).toList());
     }
 
-    // ── FIX 3 : Mettre à jour le fond des emojis ─────────────────
+    // Mettre à jour le fond des emojis
     private void appliquerFondEmoji(VBox card, int hboxIndex, String bgEmoji) {
         try {
             // Structure : VBox > HBox > Label(emoji)
@@ -411,7 +411,7 @@ public class DashboardController {
         } catch (Exception ignored) {}
     }
 
-    // ── Statistiques ──────────────────────────────────────────────
+    //  Statistiques
     private void chargerStatistiques() {
         List<User> tous = dao.findAll();
 
@@ -436,7 +436,7 @@ public class DashboardController {
         afficherCartesDerniers(tous.stream().limit(5).toList());
     }
 
-    // ── Cartes mini dashboard ─────────────────────────────────────
+    //  Cartes mini dashboard
     private void afficherCartesDerniers(List<User> users) {
         flowDerniers.getChildren().clear();
 
@@ -535,7 +535,7 @@ public class DashboardController {
                 "-fx-cursor: hand;";
     }
 
-    // ── Cartes utilisateurs ───────────────────────────────────────
+    //  Cartes utilisateurs
     private void chargerTousUsers() {
         afficherCartes(dao.findAll());
     }
@@ -676,7 +676,7 @@ public class DashboardController {
                 "-fx-effect: dropshadow(gaussian," + c + "66,20,0,0,0);";
     }
 
-    // ── Navigation ────────────────────────────────────────────────
+    //  Navigation
     @FXML private void handleMenuDashboard()   { afficherPage("dashboard"); }
     @FXML private void handleMenuUsers()       { afficherPage("users"); }
     @FXML private void handleMenuEtudiants()   {
@@ -727,7 +727,7 @@ public class DashboardController {
         }
     }
 
-    // ── Formulaire ────────────────────────────────────────────────
+    //  Formulaire
     @FXML
     private void handleAjouterUser() { ouvrirFormulaire(null); }
 
@@ -755,7 +755,7 @@ public class DashboardController {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    // ── Supprimer ─────────────────────────────────────────────────
+    //  Supprimer
     private void supprimerUser(User u) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Confirmation");
@@ -774,7 +774,7 @@ public class DashboardController {
         });
     }
 
-    // ── Recherche ─────────────────────────────────────────────────
+    //  Recherche
     @FXML
     private void handleRecherche() {
         String kw = txtRecherche.getText().trim();
@@ -788,7 +788,7 @@ public class DashboardController {
         chargerTousUsers();
     }
 
-    // ── Déconnexion ───────────────────────────────────────────────
+    //  Déconnexion
     @FXML
     private void handleDeconnexion() {
         SessionManager.getInstance().clear();

@@ -17,12 +17,12 @@ import java.sql.SQLException;
 
 public class ForgotPasswordController {
 
-    // ── Étape 1 ───────────────────────────────────────────────────
+
     @FXML private VBox      etape1;
     @FXML private TextField txtEmail;
     @FXML private Label     errEmail;
 
-    // ── Étape 2 ───────────────────────────────────────────────────
+
     @FXML private VBox          etape2;
     @FXML private PasswordField txtNouveauMdp;
     @FXML private PasswordField txtConfirmMdp;
@@ -30,11 +30,11 @@ public class ForgotPasswordController {
     @FXML private Label         errNouveauMdp;
     @FXML private Label         errConfirmMdp;
 
-    // ── Indicateur étapes ─────────────────────────────────────────
+    // Indicateur étapes
     @FXML private StackPane etapeCircle2;
     @FXML private Label     lblEtape2Txt;
 
-    // ── Jauge force MDP ───────────────────────────────────────────
+    // Jauge force MDP
     @FXML private Label  lblForceMdp;
     @FXML private Region force1;
     @FXML private Region force2;
@@ -47,13 +47,13 @@ public class ForgotPasswordController {
     // ── Initialisation ────────────────────────────────────────────
     @FXML
     public void initialize() {
-        // Validation email en temps réel
+
         txtEmail.textProperty().addListener((obs, o, n) -> {
             if (!n.isEmpty()) validerEmail();
             else errEmail.setText("");
         });
 
-        // Jauge force MDP en temps réel
+
         txtNouveauMdp.textProperty().addListener((obs, o, n) -> {
             mettreAJourForceMdp(n);
             if (!txtConfirmMdp.getText().isEmpty())
@@ -66,9 +66,9 @@ public class ForgotPasswordController {
         });
     }
 
-    // ══════════════════════════════════════════════════════════════
-    //  ÉTAPE 1 : Vérifier l'email
-    // ══════════════════════════════════════════════════════════════
+
+    //   Vérifier l'email
+
 
     @FXML
     private void handleVerifierEmail() {
@@ -92,7 +92,7 @@ public class ForgotPasswordController {
 
                 lblEmailConfirm.setText(nom + " · " + email);
 
-                // Activer l'indicateur étape 2
+
                 etapeCircle2.setStyle(
                         "-fx-background-color: #7c3aed;" +
                                 "-fx-background-radius: 50;" +
@@ -102,7 +102,7 @@ public class ForgotPasswordController {
                         "-fx-font-size: 11; -fx-text-fill: #7c3aed;" +
                                 "-fx-font-weight: bold;");
 
-                // Transition étape 1 → étape 2
+
                 etape1.setVisible(false);
                 etape1.setManaged(false);
                 etape2.setVisible(true);
@@ -120,9 +120,8 @@ public class ForgotPasswordController {
         }
     }
 
-    // ══════════════════════════════════════════════════════════════
-    //  ÉTAPE 2 : Réinitialiser le mot de passe
-    // ══════════════════════════════════════════════════════════════
+    // Réinitialiser le mot de passe
+
 
     @FXML
     private void handleReinitialiser() {
@@ -159,9 +158,9 @@ public class ForgotPasswordController {
         }
     }
 
-    // ══════════════════════════════════════════════════════════════
+
     //  VALIDATIONS
-    // ══════════════════════════════════════════════════════════════
+
 
     private boolean validerEmail() {
         String v = txtEmail.getText().trim();
@@ -211,9 +210,9 @@ public class ForgotPasswordController {
         return true;
     }
 
-    // ══════════════════════════════════════════════════════════════
+
     //  JAUGE FORCE MOT DE PASSE
-    // ══════════════════════════════════════════════════════════════
+
 
     private void mettreAJourForceMdp(String mdp) {
         if (mdp.isEmpty()) {
@@ -293,9 +292,9 @@ public class ForgotPasswordController {
         force4.setStyle(vide);
     }
 
-    // ══════════════════════════════════════════════════════════════
+
     //  HELPERS STYLE
-    // ══════════════════════════════════════════════════════════════
+
 
     private void setErreur(Control champ, Label errLabel, String msg) {
         errLabel.setText("⚠ " + msg);
@@ -313,7 +312,7 @@ public class ForgotPasswordController {
                 "-fx-border-color: #22c55e;");
     }
 
-    // ── Retour ────────────────────────────────────────────────────
+
     @FXML
     private void handleRetour() { fermerFenetre(); }
 

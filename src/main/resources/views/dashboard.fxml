@@ -14,11 +14,11 @@
 
 <BorderPane fx:id="rootPane" prefHeight="700" prefWidth="1100" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edunova.connexion.controllers.DashboardController">
 
-    <!-- ══════════════ SIDEBAR ══════════════ -->
+
     <left>
         <VBox fx:id="sidebar" prefWidth="260">
 
-            <!-- Logo grand -->
+
             <VBox fx:id="logoBox" alignment="CENTER" style="-fx-padding: 25 20 20 20;">
                 <Label fx:id="lblLogo" style="-fx-font-size: 36; -fx-font-weight: bold;                               -fx-text-fill: #7c3aed;" text="EduNova" />
                 <Label fx:id="lblLogoSub" style="-fx-font-size: 10; -fx-text-fill: #a78bfa;                               -fx-wrap-text: true; -fx-text-alignment: center;" text="Application de gestion scolaire" />
@@ -26,7 +26,7 @@
 
             <Region fx:id="sepLogo" style="-fx-background-color: #2d2d4e; -fx-pref-height: 1;" />
 
-            <!-- Info utilisateur -->
+
             <VBox fx:id="userBox" alignment="CENTER" style="-fx-padding: 18 15;">
                 <StackPane fx:id="avatarPane" alignment="CENTER" style="-fx-background-color: #7c3aed;                                   -fx-background-radius: 50;                                   -fx-min-width: 60; -fx-min-height: 60;                                   -fx-max-width: 60; -fx-max-height: 60;">
                     <Label fx:id="lblAvatarInitiales" style="-fx-font-size: 22; -fx-font-weight: bold;                                   -fx-text-fill: white;" />
@@ -37,7 +37,7 @@
 
             <Region fx:id="sepUser" style="-fx-background-color: #2d2d4e; -fx-pref-height: 1;" />
 
-            <!-- Menu -->
+
             <VBox fx:id="menuBox" spacing="4" style="-fx-padding: 15 12;">
                 <Button fx:id="btnMenuDashboard" maxWidth="Infinity" onAction="#handleMenuDashboard" text="   Tableau de bord" />
                 <Button fx:id="btnMenuUsers" maxWidth="Infinity" onAction="#handleMenuUsers" text="   Utilisateurs" />
@@ -48,10 +48,10 @@
 
             <Region VBox.vgrow="ALWAYS" />
 
-            <!-- Thème + Déconnexion -->
+
             <VBox fx:id="bottomBox" spacing="8" style="-fx-padding: 12 12 20 12;">
 
-                <!-- Toggle thème -->
+
                 <HBox alignment="CENTER" spacing="10">
                     <Label fx:id="lblTheme" style="-fx-font-size: 12;" text="🌙  Mode sombre">
                   <font>
@@ -200,7 +200,7 @@
                     </VBox>
                 </ScrollPane>
 
-                <!-- PAGE UTILISATEURS -->
+
                 <VBox fx:id="pageUsers" managed="false" spacing="15" style="-fx-padding: 25;" visible="false">
 
                     <VBox spacing="4">
