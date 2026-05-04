@@ -12,9 +12,11 @@ import com.google.api.services.oauth2.model.Userinfo;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
@@ -22,7 +24,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public class LoginController {
@@ -33,11 +34,6 @@ public class LoginController {
     @FXML private PasswordField txtPasswordO;
     @FXML private Label         errLoginEmail;
     @FXML private Label         errLoginPassword;
-
-    // ── Captcha ───────────────────────────────────────────────────
-    @FXML private Label     lblCaptchaQuestion;
-    @FXML private TextField txtCaptcha;
-    @FXML private Label     errCaptcha;
 
     // ── Inscription ───────────────────────────────────────────────
     @FXML private VBox             panneauInscription;
@@ -58,15 +54,21 @@ public class LoginController {
     @FXML private Label            errRegRole;
     @FXML private Label            errCgu;
 
-    private final UserDAO dao            = new UserDAO();
-    private       int     captchaReponse = 0;
+    // ── Dropdown téléphone ────────────────────────────────────────
+    @FXML private Button    btnPaysReg;
+    @FXML private VBox      dropdownPaysReg;
+    @FXML private TextField txtRecherchePaysReg;
+    @FXML private VBox      listePaysReg;
+    private boolean dropdownRegVisible = false;
+    private String  codePaysCourantReg = "+216";
+
+    private final UserDAO dao = new UserDAO();
 
     // ── INITIALISATION ────────────────────────────────────────────
     @FXML
     public void initialize() {
         cbRegRole.getItems().addAll(
                 "Administrateur", "Enseignant", "Etudiant");
-        genererCaptcha();
 
         // Validations temps réel connexion
         txtEmailO.textProperty().addListener((o, old, n) -> {
@@ -85,87 +87,97 @@ public class LoginController {
             if (!n.isEmpty()) validerRegPrenom(); });
         txtRegEmail.textProperty().addListener((o, old, n) -> {
             if (!n.isEmpty()) validerRegEmail(); });
-        txtRegTel.textProperty().addListener((o, old, n) -> {
-            if (!n.isEmpty()) validerRegTel(); });
         txtRegPassword.textProperty().addListener((o, old, n) -> {
             if (!n.isEmpty()) validerRegPassword(); });
         txtRegConfirm.textProperty().addListener((o, old, n) -> {
             if (!n.isEmpty()) validerRegConfirm(); });
+
+        // Recherche pays en temps réel
+        txtRecherchePaysReg.textProperty()
+                .addListener((obs, old, n) ->
+                        filtrerPays(n, listePaysReg,
+                                true, btnPaysReg));
     }
 
     // ══════════════════════════════════════════════════════════════
-    //  CAPTCHA
+    //  DROPDOWN TÉLÉPHONE
     // ══════════════════════════════════════════════════════════════
-
-    private void genererCaptcha() {
-        Random rand = new Random();
-        int a    = rand.nextInt(10) + 1;
-        int b    = rand.nextInt(10) + 1;
-        int type = rand.nextInt(3);
-        String question;
-        switch (type) {
-            case 0 -> {
-                captchaReponse = a + b;
-                question = "Combien font  " + a + " + " + b + " ?";
-            }
-            case 1 -> {
-                captchaReponse = a * b;
-                question = "Combien font  " + a + " × " + b + " ?";
-            }
-            default -> {
-                int max = Math.max(a, b);
-                int min = Math.min(a, b);
-                captchaReponse = max - min;
-                question = "Combien font  " + max + " − " + min + " ?";
-            }
-        }
-        lblCaptchaQuestion.setText(question);
-        txtCaptcha.clear();
-        errCaptcha.setText("");
-    }
 
     @FXML
-    private void handleRefreshCaptcha() { genererCaptcha(); }
-
-    private boolean validerCaptcha() {
-        String rep = txtCaptcha.getText().trim();
-        if (rep.isEmpty()) {
-            errCaptcha.setText(
-                    "⚠ Veuillez répondre à la question.");
-            return false;
-        }
-        try {
-            if (Integer.parseInt(rep) == captchaReponse) {
-                errCaptcha.setText("");
-                return true;
-            } else {
-                errCaptcha.setText(
-                        "⚠ Réponse incorrecte. Réessayez.");
-                genererCaptcha();
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            errCaptcha.setText(
-                    "⚠ Entrez uniquement un chiffre.");
-            return false;
+    private void handleToggleDropdownReg() {
+        dropdownRegVisible = !dropdownRegVisible;
+        dropdownPaysReg.setVisible(dropdownRegVisible);
+        dropdownPaysReg.setManaged(dropdownRegVisible);
+        if (dropdownRegVisible) {
+            remplirListePays(listePaysReg, true, btnPaysReg);
+            txtRecherchePaysReg.clear();
+            txtRecherchePaysReg.requestFocus();
         }
     }
 
+    private void remplirListePays(VBox liste,
+                                  boolean light, Button btnPays) {
+        liste.getChildren().clear();
+        PhonePickerController.PAYS.forEach((pays, code) ->
+                liste.getChildren().add(
+                        PhonePickerController.creerItem(
+                                pays, code, !light,
+                                () -> selectionnerPays(
+                                        pays, code, btnPays))));
+    }
+
+    private void filtrerPays(String keyword, VBox liste,
+                             boolean light, Button btnPays) {
+        liste.getChildren().clear();
+        PhonePickerController.PAYS.entrySet().stream()
+                .filter(e -> e.getKey().toLowerCase()
+                        .contains(keyword.toLowerCase()) ||
+                        e.getValue().contains(keyword))
+                .forEach(e -> liste.getChildren().add(
+                        PhonePickerController.creerItem(
+                                e.getKey(), e.getValue(), !light,
+                                () -> selectionnerPays(
+                                        e.getKey(), e.getValue(), btnPays))));
+    }
+
+    private void selectionnerPays(String pays, String code,
+                                  Button btnPays) {
+        // Bouton : emoji + code
+        String emoji = PhonePickerController.getEmoji(pays);
+        btnPays.setText(emoji + "  " + code);
+        codePaysCourantReg = code;
+
+        // Nettoyer le numéro existant
+        String numero = txtRegTel.getText()
+                .replaceAll("^\\+\\d+\\s*", "").trim();
+        txtRegTel.setText(numero);
+
+        // Fermer dropdown
+        dropdownRegVisible = false;
+        dropdownPaysReg.setVisible(false);
+        dropdownPaysReg.setManaged(false);
+        txtRegTel.requestFocus();
+    }
+
     // ══════════════════════════════════════════════════════════════
-    //  CONNEXION NORMALE
+    //  CONNEXION
     // ══════════════════════════════════════════════════════════════
 
     @FXML
     private void handleLogin() {
         boolean e = validerLoginEmail();
         boolean p = validerLoginPassword();
-        boolean c = validerCaptcha();
-        if (!e || !p || !c) return;
+        if (!e || !p) return;
+        effectuerConnexion();
+    }
 
+    private void effectuerConnexion() {
         String email    = txtEmailO.getText().trim();
         String password = txtPasswordO.getText();
 
-        try (Connection conn = DatabaseConnection.getConnection()) {
+        try (Connection conn =
+                     DatabaseConnection.getConnection()) {
+
             String sql =
                     "SELECT u.id_u, u.password_u, " +
                             "       u.nom_u, u.prenom_u, r.nom_r " +
@@ -173,16 +185,18 @@ public class LoginController {
                             "JOIN role r ON u.role_id = r.id_r " +
                             "WHERE u.email_u = ? AND u.actif_u = 1";
 
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            PreparedStatement stmt =
+                    conn.prepareStatement(sql);
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                if (PasswordUtils.verify(
-                        password, rs.getString("password_u"))) {
+                if (PasswordUtils.verify(password,
+                        rs.getString("password_u"))) {
 
                     String role = rs.getString("nom_r");
-                    SessionManager s = SessionManager.getInstance();
+                    SessionManager s =
+                            SessionManager.getInstance();
                     s.setUserId(rs.getInt("id_u"));
                     s.setEmail(email);
                     s.setRole(role);
@@ -194,15 +208,15 @@ public class LoginController {
                 } else {
                     enregistrerHistorique(conn,
                             rs.getInt("id_u"), false);
-                    setErreur(txtPasswordO, errLoginPassword,
+                    setErreur(txtPasswordO,
+                            errLoginPassword,
                             "Mot de passe incorrect.");
-                    genererCaptcha();
                 }
             } else {
                 setErreur(txtEmailO, errLoginEmail,
                         "Aucun compte actif trouvé.");
-                genererCaptcha();
             }
+
         } catch (SQLException ex) {
             showAlert("Erreur BD : " + ex.getMessage());
         } catch (Exception ex) {
@@ -211,33 +225,26 @@ public class LoginController {
     }
 
     // ══════════════════════════════════════════════════════════════
-    //  CONNEXION GOOGLE
+    //  GOOGLE
     // ══════════════════════════════════════════════════════════════
 
     @FXML
     private void handleGoogleLogin() {
-        // Désactiver le bouton pendant le chargement
         showAlert("🔄 Ouverture du navigateur Google...\n\n" +
-                "Une fenêtre va s'ouvrir dans votre navigateur.\n" +
-                "Connectez-vous avec votre compte Google.");
+                "Une fenêtre va s'ouvrir dans votre navigateur.");
 
-        // Traitement en arrière-plan
         new Thread(() -> {
             try {
-                // Récupérer les infos Google
                 Userinfo userInfo =
                         GoogleAuthService.getGoogleUserInfo();
-
                 String email  = userInfo.getEmail();
                 String nom    = userInfo.getFamilyName() != null
                         ? userInfo.getFamilyName() : "";
                 String prenom = userInfo.getGivenName() != null
                         ? userInfo.getGivenName() : "";
-
                 Platform.runLater(() ->
                         traiterConnexionGoogle(
                                 email, nom, prenom));
-
             } catch (Exception ex) {
                 Platform.runLater(() ->
                         showAlert("❌ Erreur Google :\n" +
@@ -249,65 +256,111 @@ public class LoginController {
     private void traiterConnexionGoogle(
             String email, String nom, String prenom) {
 
-        try (Connection conn = DatabaseConnection.getConnection()) {
+        try (Connection conn =
+                     DatabaseConnection.getConnection()) {
 
-            // Chercher si l'utilisateur existe déjà
             String sql =
-                    "SELECT u.id_u, u.nom_u, u.prenom_u, r.nom_r " +
+                    "SELECT u.id_u, u.nom_u, " +
+                            "       u.prenom_u, r.nom_r " +
                             "FROM user u " +
                             "JOIN role r ON u.role_id = r.id_r " +
                             "WHERE u.email_u = ? AND u.actif_u = 1";
 
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            PreparedStatement stmt =
+                    conn.prepareStatement(sql);
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                // ✅ Compte existant → connexion directe
                 String role = rs.getString("nom_r");
-                SessionManager s = SessionManager.getInstance();
+                SessionManager s =
+                        SessionManager.getInstance();
                 s.setUserId(rs.getInt("id_u"));
                 s.setEmail(email);
                 s.setRole(role);
-
                 enregistrerHistorique(conn,
                         rs.getInt("id_u"), true);
-
                 showAlert("✅ Connexion Google réussie !\n" +
-                        "Bienvenue " + rs.getString("prenom_u") +
-                        " " + rs.getString("nom_u"));
+                        "Bienvenue " +
+                        rs.getString("prenom_u") + " " +
+                        rs.getString("nom_u"));
                 ouvrirDashboard();
-
             } else {
-                // ❌ Compte inexistant →
-                // Pré-remplir le formulaire d'inscription
                 showAlert("📋 Compte Google non trouvé.\n\n" +
-                        "Veuillez compléter votre inscription.\n" +
-                        "Vos informations ont été pré-remplies.");
-
-                // Pré-remplir le formulaire inscription
+                        "Veuillez compléter votre inscription.");
                 panneauConnexion.setVisible(false);
                 panneauConnexion.setManaged(false);
                 panneauInscription.setVisible(true);
                 panneauInscription.setManaged(true);
-
                 txtRegNom.setText(nom);
                 txtRegPrenom.setText(prenom);
                 txtRegEmail.setText(email);
-                // Générer un mot de passe temporaire
                 String mdpTemp = UUID.randomUUID()
                         .toString().substring(0, 8);
                 txtRegPassword.setText(mdpTemp);
                 txtRegConfirm.setText(mdpTemp);
-
-                showAlert("🔑 Mot de passe temporaire généré :\n" +
-                        mdpTemp + "\n\n" +
-                        "Notez-le ou changez-le après connexion.");
+                showAlert("🔑 Mot de passe temporaire :\n" +
+                        mdpTemp);
             }
-
         } catch (SQLException ex) {
             showAlert("Erreur BD : " + ex.getMessage());
-            ex.printStackTrace();
+        }
+    }
+
+    // ── Ouvrir Dashboard ──────────────────────────────────────────
+    private void ouvrirDashboard() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/views/dashboard.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("EduNova — Dashboard");
+            stage.setScene(new Scene(
+                    loader.load(), 1100, 700));
+            stage.show();
+            ((Stage) txtEmailO.getScene()
+                    .getWindow()).close();
+        } catch (Exception ex) {
+            showAlert("Erreur : " + ex.getMessage());
+        }
+    }
+
+    // ── Historique ────────────────────────────────────────────────
+    private void enregistrerHistorique(
+            Connection conn, int userId, boolean succes) {
+        try {
+            PreparedStatement stmt = conn.prepareStatement(
+                    "INSERT INTO login_history " +
+                            "(user_id, adresse_ip_lh, succes_lh) " +
+                            "VALUES (?, ?, ?)");
+            stmt.setInt(1, userId);
+            stmt.setString(2, "127.0.0.1");
+            stmt.setBoolean(3, succes);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(
+                    "Erreur historique : " + e.getMessage());
+        }
+    }
+
+    // ── Mot de passe oublié ───────────────────────────────────────
+    @FXML
+    private void handleForgotPassword() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/views/forgot_password.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle(
+                    "EduNova - Mot de passe oublié");
+            stage.setScene(new Scene(loader.load()));
+            stage.setResizable(false);
+            stage.initOwner(
+                    txtEmailO.getScene().getWindow());
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -330,7 +383,6 @@ public class LoginController {
         panneauInscription.setManaged(false);
         panneauConnexion.setVisible(true);
         panneauConnexion.setManaged(true);
-        genererCaptcha();
     }
 
     @FXML
@@ -338,19 +390,21 @@ public class LoginController {
         boolean n  = validerRegNom();
         boolean p  = validerRegPrenom();
         boolean e  = validerRegEmail();
-        boolean t  = validerRegTel();
         boolean pw = validerRegPassword();
         boolean cf = validerRegConfirm();
         boolean r  = validerRegRole();
         boolean cg = validerCgu();
-        if (!n || !p || !e || !t || !pw || !cf || !r || !cg)
+        if (!n || !p || !e || !pw || !cf || !r || !cg)
             return;
 
         User u = new User();
         u.setNom(txtRegNom.getText().trim());
         u.setPrenom(txtRegPrenom.getText().trim());
         u.setEmail(txtRegEmail.getText().trim());
-        u.setTelephone(txtRegTel.getText().trim());
+        String numero = txtRegTel.getText().trim();
+        if (!numero.isEmpty() && !numero.startsWith("+"))
+            numero = codePaysCourantReg + " " + numero;
+        u.setTelephone(numero);
         u.setPassword(txtRegPassword.getText());
         u.setActif(true);
         u.setRoleId(getRoleId(cbRegRole.getValue()));
@@ -358,8 +412,7 @@ public class LoginController {
         if (dao.insert(u)) {
             showAlert("✅ Compte créé avec succès !\n\n" +
                     "Bienvenue " + u.getPrenom() +
-                    " " + u.getNom() + " !\n" +
-                    "Vous pouvez maintenant vous connecter.");
+                    " " + u.getNom() + " !");
             handleShowConnexion();
         } else {
             setErreurLabel(errRegEmail,
@@ -367,67 +420,8 @@ public class LoginController {
         }
     }
 
-    // ── Historique ────────────────────────────────────────────────
-    private void enregistrerHistorique(Connection conn,
-                                       int userId, boolean succes) {
-        try {
-            PreparedStatement stmt = conn.prepareStatement(
-                    "INSERT INTO login_history " +
-                            "(user_id, adresse_ip_lh, succes_lh) " +
-                            "VALUES (?, ?, ?)");
-            stmt.setInt(1, userId);
-            stmt.setString(2, "127.0.0.1");
-            stmt.setBoolean(3, succes);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(
-                    "Erreur historique : " + e.getMessage());
-        }
-    }
-
-    // ── Ouvrir Dashboard ──────────────────────────────────────────
-    private void ouvrirDashboard() {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource(
-                            "/views/dashboard.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("EduNova — Dashboard");
-            stage.setScene(new Scene(
-                    loader.load(), 1100, 700));
-            stage.show();
-            ((Stage) txtEmailO.getScene()
-                    .getWindow()).close();
-        } catch (Exception ex) {
-            showAlert("Erreur ouverture dashboard : " +
-                    ex.getMessage());
-            ex.printStackTrace();
-        }
-    }
-
-    // ── Mot de passe oublié ───────────────────────────────────────
-    @FXML
-    private void handleForgotPassword() {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource(
-                            "/views/forgot_password.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("EduNova - Mot de passe oublié");
-            stage.setScene(new Scene(loader.load()));
-            stage.setResizable(false);
-            stage.initOwner(
-                    txtEmailO.getScene().getWindow());
-            stage.initModality(
-                    javafx.stage.Modality.WINDOW_MODAL);
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     // ══════════════════════════════════════════════════════════════
-    //  VALIDATIONS CONNEXION
+    //  VALIDATIONS
     // ══════════════════════════════════════════════════════════════
 
     private boolean validerLoginEmail() {
@@ -458,15 +452,10 @@ public class LoginController {
         return true;
     }
 
-    // ══════════════════════════════════════════════════════════════
-    //  VALIDATIONS INSCRIPTION
-    // ══════════════════════════════════════════════════════════════
-
     private boolean validerRegNom() {
         String v = txtRegNom.getText().trim();
         if (v.isEmpty()) {
-            setErreur(txtRegNom, errRegNom,
-                    "Obligatoire.");
+            setErreur(txtRegNom, errRegNom, "Obligatoire.");
             return false;
         }
         if (!v.matches("[a-zA-ZÀ-ÿ\\s\\-']{2,50}")) {
@@ -508,18 +497,6 @@ public class LoginController {
             return false;
         }
         setOk(txtRegEmail, errRegEmail);
-        return true;
-    }
-
-    private boolean validerRegTel() {
-        String v = txtRegTel.getText().trim();
-        if (!v.isEmpty() &&
-                !v.matches("^[+0-9][0-9\\s\\-\\.]{7,19}$")) {
-            setErreur(txtRegTel, errRegTel,
-                    "Format invalide. Ex: +216 22 123 456");
-            return false;
-        }
-        setOk(txtRegTel, errRegTel);
         return true;
     }
 
@@ -610,15 +587,27 @@ public class LoginController {
     }
 
     private void effacerErreursInscription() {
-        txtRegNom.clear();      txtRegPrenom.clear();
-        txtRegEmail.clear();    txtRegTel.clear();
-        txtRegPassword.clear(); txtRegConfirm.clear();
+        txtRegNom.clear();
+        txtRegPrenom.clear();
+        txtRegEmail.clear();
+        txtRegTel.clear();
+        txtRegPassword.clear();
+        txtRegConfirm.clear();
         cbRegRole.setValue(null);
         chkCgu.setSelected(false);
-        errRegNom.setText("");   errRegPrenom.setText("");
-        errRegEmail.setText("");  errRegTel.setText("");
-        errRegPassword.setText(""); errRegConfirm.setText("");
-        errRegRole.setText("");  errCgu.setText("");
+        errRegNom.setText("");
+        errRegPrenom.setText("");
+        errRegEmail.setText("");
+        errRegTel.setText("");
+        errRegPassword.setText("");
+        errRegConfirm.setText("");
+        errRegRole.setText("");
+        errCgu.setText("");
+        dropdownRegVisible = false;
+        dropdownPaysReg.setVisible(false);
+        dropdownPaysReg.setManaged(false);
+        btnPaysReg.setText("🇹🇳 +216");
+        codePaysCourantReg = "+216";
     }
 
     private int getRoleId(String roleNom) {

@@ -5,13 +5,13 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="18"
-      prefWidth="500"
+<VBox spacing="18" prefWidth="500"
       style="-fx-background-color: #1a1a2e; -fx-padding: 30;
              -fx-background-radius: 12;"
       xmlns="http://javafx.com/javafx/21"
@@ -25,7 +25,7 @@
 
     <Region style="-fx-background-color: #2d2d4e; -fx-pref-height: 1;"/>
 
-    <!-- Nom / Prénom -->
+    <!-- Nom / Prenom -->
     <HBox spacing="15">
         <VBox HBox.hgrow="ALWAYS" spacing="5">
             <Label text="Nom *"
@@ -34,8 +34,10 @@
                        style="-fx-background-color: #0f0f1a;
                               -fx-text-fill: #e2e8f0;
                               -fx-prompt-text-fill: #475569;
-                              -fx-background-radius: 8; -fx-padding: 10 14;
-                              -fx-border-color: #2d2d4e; -fx-border-radius: 8;"/>
+                              -fx-background-radius: 8;
+                              -fx-padding: 10 14;
+                              -fx-border-color: #2d2d4e;
+                              -fx-border-radius: 8;"/>
             <Label fx:id="errNom" text=""
                    style="-fx-text-fill: #f87171; -fx-font-size: 11;"/>
         </VBox>
@@ -46,8 +48,10 @@
                        style="-fx-background-color: #0f0f1a;
                               -fx-text-fill: #e2e8f0;
                               -fx-prompt-text-fill: #475569;
-                              -fx-background-radius: 8; -fx-padding: 10 14;
-                              -fx-border-color: #2d2d4e; -fx-border-radius: 8;"/>
+                              -fx-background-radius: 8;
+                              -fx-padding: 10 14;
+                              -fx-border-color: #2d2d4e;
+                              -fx-border-radius: 8;"/>
             <Label fx:id="errPrenom" text=""
                    style="-fx-text-fill: #f87171; -fx-font-size: 11;"/>
         </VBox>
@@ -61,36 +65,89 @@
                    style="-fx-background-color: #0f0f1a;
                           -fx-text-fill: #e2e8f0;
                           -fx-prompt-text-fill: #475569;
-                          -fx-background-radius: 8; -fx-padding: 10 14;
-                          -fx-border-color: #2d2d4e; -fx-border-radius: 8;"/>
+                          -fx-background-radius: 8;
+                          -fx-padding: 10 14;
+                          -fx-border-color: #2d2d4e;
+                          -fx-border-radius: 8;"/>
         <Label fx:id="errEmail" text=""
                style="-fx-text-fill: #f87171; -fx-font-size: 11;"/>
     </VBox>
 
-    <!-- Téléphone -->
-    <VBox spacing="5">
+    <!-- Téléphone avec dropdown inline dark -->
+    <VBox spacing="6">
         <Label text="Téléphone"
                style="-fx-text-fill: #94a3b8; -fx-font-size: 12;"/>
-        <TextField fx:id="txtTelephone" promptText="+216 XX XXX XXX"
-                   style="-fx-background-color: #0f0f1a;
-                          -fx-text-fill: #e2e8f0;
-                          -fx-prompt-text-fill: #475569;
-                          -fx-background-radius: 8; -fx-padding: 10 14;
-                          -fx-border-color: #2d2d4e; -fx-border-radius: 8;"/>
-        <Label fx:id="errTelephone" text=""
-               style="-fx-text-fill: #f87171; -fx-font-size: 11;"/>
+        <HBox spacing="8" alignment="CENTER_LEFT">
+            <Button fx:id="btnPaysForm"
+                    text="🇹🇳  +216"
+                    onAction="#handleToggleDropdownForm"
+                    style="-fx-background-color: #0f0f1a;
+               -fx-text-fill: #a78bfa;
+               -fx-font-size: 13;
+               -fx-font-weight: bold;
+               -fx-background-radius: 8;
+               -fx-border-color: #7c3aed;
+               -fx-border-radius: 8;
+               -fx-border-width: 1;
+               -fx-padding: 10 14;
+               -fx-cursor: hand;
+               -fx-min-width: 110;"/>
+            <TextField fx:id="txtTelephone"
+                       HBox.hgrow="ALWAYS"
+                       promptText="22 123 456"
+                       style="-fx-background-color: #0f0f1a;
+                              -fx-text-fill: #e2e8f0;
+                              -fx-prompt-text-fill: #475569;
+                              -fx-background-radius: 8;
+                              -fx-padding: 10 14;
+                              -fx-border-color: #2d2d4e;
+                              -fx-border-radius: 8;"/>
+        </HBox>
+
+        <!-- Dropdown inline dark -->
+        <VBox fx:id="dropdownPaysForm"
+              visible="false" managed="false"
+              spacing="6"
+              style="-fx-background-color: #1a1a2e;
+                     -fx-background-radius: 10;
+                     -fx-border-color: #2d2d4e;
+                     -fx-border-radius: 10;
+                     -fx-border-width: 1;
+                     -fx-padding: 10;
+                     -fx-effect: dropshadow(gaussian,
+                                 rgba(0,0,0,0.3),12,0,0,4);">
+            <TextField fx:id="txtRecherchePaysForm"
+                       promptText="🔍  Rechercher un pays..."
+                       style="-fx-background-color: #0f0f1a;
+                              -fx-text-fill: #e2e8f0;
+                              -fx-prompt-text-fill: #475569;
+                              -fx-background-radius: 8;
+                              -fx-padding: 8 12;
+                              -fx-border-color: #2d2d4e;
+                              -fx-border-radius: 8;
+                              -fx-font-size: 12;"/>
+            <ScrollPane prefHeight="150" fitToWidth="true"
+                        style="-fx-background: transparent;
+                               -fx-background-color: transparent;
+                               -fx-border-color: transparent;">
+                <VBox fx:id="listePaysForm" spacing="2"/>
+            </ScrollPane>
+        </VBox>
     </VBox>
 
     <!-- Mot de passe -->
     <VBox spacing="5">
         <Label fx:id="lblMdpHint" text="Mot de passe *"
                style="-fx-text-fill: #94a3b8; -fx-font-size: 12;"/>
-        <PasswordField fx:id="txtPassword" promptText="Minimum 6 caractères"
+        <PasswordField fx:id="txtPassword"
+                       promptText="Minimum 6 caractères"
                        style="-fx-background-color: #0f0f1a;
                               -fx-text-fill: #e2e8f0;
                               -fx-prompt-text-fill: #475569;
-                              -fx-background-radius: 8; -fx-padding: 10 14;
-                              -fx-border-color: #2d2d4e; -fx-border-radius: 8;"/>
+                              -fx-background-radius: 8;
+                              -fx-padding: 10 14;
+                              -fx-border-color: #2d2d4e;
+                              -fx-border-radius: 8;"/>
         <Label fx:id="errPassword" text=""
                style="-fx-text-fill: #f87171; -fx-font-size: 11;"/>
     </VBox>
@@ -110,7 +167,8 @@
         <VBox spacing="5" alignment="CENTER_LEFT">
             <Label text="Statut"
                    style="-fx-text-fill: #94a3b8; -fx-font-size: 12;"/>
-            <CheckBox fx:id="chkActif" text="Compte actif" selected="true"
+            <CheckBox fx:id="chkActif" text="Compte actif"
+                      selected="true"
                       style="-fx-text-fill: #e2e8f0;"/>
         </VBox>
     </HBox>
@@ -124,14 +182,22 @@
                            visible="false"
                            style="-fx-accent: #7c3aed;"/>
         <Button text="Annuler" onAction="#handleAnnuler"
-                style="-fx-background-color: #1e293b; -fx-text-fill: #94a3b8;
-                       -fx-background-radius: 8; -fx-padding: 10 24;
-                       -fx-font-size: 13; -fx-border-color: #2d2d4e;
-                       -fx-border-radius: 8; -fx-cursor: hand;"/>
+                style="-fx-background-color: #1e293b;
+                       -fx-text-fill: #94a3b8;
+                       -fx-background-radius: 8;
+                       -fx-padding: 10 24;
+                       -fx-font-size: 13;
+                       -fx-border-color: #2d2d4e;
+                       -fx-border-radius: 8;
+                       -fx-cursor: hand;"/>
         <Button fx:id="btnSauvegarder" text="Sauvegarder"
                 onAction="#handleSauvegarder"
-                style="-fx-background-color: #7c3aed; -fx-text-fill: white;
-                       -fx-font-weight: bold; -fx-background-radius: 8;
-                       -fx-padding: 10 24; -fx-font-size: 13; -fx-cursor: hand;"/>
+                style="-fx-background-color: #7c3aed;
+                       -fx-text-fill: white;
+                       -fx-font-weight: bold;
+                       -fx-background-radius: 8;
+                       -fx-padding: 10 24;
+                       -fx-font-size: 13;
+                       -fx-cursor: hand;"/>
     </HBox>
 </VBox>
